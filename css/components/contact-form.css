@@ -1,0 +1,264 @@
+/* ==========================================================================
+   contact-form.css — 共用聯絡表單元件（由 js/common/contact-form.js 注入 DOM）
+   Figma node 151:1185；背景為深藍漸層疊一張全版背景圖（soft-light, 50%）
+   ========================================================================== */
+
+.contact-section {
+  position: relative;
+  overflow: hidden;
+  background: var(--brand-gradient-dark);
+  padding-block: var(--space-8);
+  color: var(--white);
+}
+
+.contact-section > .container {
+  max-width: 1600px;
+  width: calc(100% - 48px);
+  padding-inline: 0;
+}
+
+.contact-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Figma 151:1185 的疊圖層 I151:1185;151:1044。
+     舊檔是整個 section 的壓平匯出（藍色帶只佔中間、上下是白的），用 cover 疊上去
+     等於把白色區塊一起拉伸，soft-light 又會把那塊打亮；已換成該層真正的來源照片。
+     稿上是 object-fit: cover 進 1920×960 的框再往下位移 111.88px：
+     4096×2731 以寬度貼合後高 1280、溢出 320，置中會裁掉上緣 160，
+     位移後只裁 48.12 → 48.12 / 320 ≈ 15%。 */
+  background-image: url('../../images/home/form-bg-overlay.jpg');
+  background-size: cover;
+  background-position: center 15%;
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.contact-section__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(360px, 560px) minmax(0, 960px);
+  gap: clamp(var(--space-5), 4vw, 80px);
+  align-items: center;
+}
+
+/* Figma 稿上左欄總寬 560、標題文字實際佔 459px，內縮只發生在左側（約 80px）。
+   原本兩側各 80px 只剩 400px 可用，比 40px×11 字的標題還窄，
+   會把「讓我們為您量身規劃專屬」的最後一個字擠到第三行。 */
+.contact-section__copy {
+  padding-inline: 80px 0;
+}
+
+.contact-section__eyebrow {
+  color: var(--white);
+}
+
+.contact-section__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  /* 稿上 1920 是 40px；原本的 0.5vw 要到 2240px 才碰得到上限，1920 只有 37.6px */
+  font-size: clamp(2rem, 1.75rem + 0.625vw, 2.5rem);
+  line-height: 1.4;
+  color: var(--line);
+  margin-bottom: var(--space-4);
+}
+
+.contact-section__desc {
+  font-size: clamp(1rem, 0.85rem + 0.45vw, 1.5rem);
+  line-height: 1.8;
+  color: var(--line);
+  max-width: 520px;
+}
+
+.contact-form {
+  border-radius: var(--radius-sm);
+  padding-inline: 64px;
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: var(--space-5);
+  row-gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.contact-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.contact-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.contact-form__label {
+  padding-inline: var(--space-2);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 31px;
+  color: var(--line);
+}
+
+.contact-form__input-wrap {
+  position: relative;
+}
+
+.contact-form__input-wrap .contact-form__icon {
+  position: absolute;
+  left: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+}
+
+.contact-form__input {
+  width: 100%;
+  height: 80px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-regular);
+  padding-inline: 25px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.contact-form__input-wrap .contact-form__input {
+  padding-left: 73px;
+}
+
+.contact-form__input::placeholder {
+  /* Figma 151:1185 的 placeholder 是 #676f79，比 --text-regular(#6b7280) 略深 */
+  color: #676f79;
+  opacity: 1;
+}
+
+/* 原本只靠 1px 邊框變色 + 底色 0.9→1，在深藍底上三個同色同形的欄位很難分辨
+   游標停在哪一欄；補一圈實際看得見的焦點環（Figma 未提供 focus 稿）。 */
+.contact-form__input:focus {
+  outline: none;
+  border-color: var(--color-primary-hover);
+  background: var(--white);
+}
+
+/* 外環刻意寫死 #7fe4ff 的 60% alpha，不用 var(--color-primary-hover)：
+   要帶透明度得靠 color-mix()，而它 2023 才普及，低於本站 2021 的支援 baseline。 */
+.contact-form__input:focus-visible {
+  outline: 1px solid rgba(127, 228, 255, 0.6);
+  outline-offset: 1px;
+}
+
+.contact-form__input.is-invalid {
+  border-color: #ff8b8b;
+}
+
+.contact-form__error {
+  font-size: 12px;
+  color: #ffb4b4;
+  min-height: 0;
+}
+
+.contact-form__error:not(:empty) {
+  min-height: 16px;
+}
+
+/* reCAPTCHA 容器：本次僅預留位置，不載入任何 Google reCAPTCHA 腳本 */
+.contact-form__recaptcha {
+  margin-block: var(--space-3);
+  min-height: 0;
+}
+
+.contact-form__submit-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 0;
+}
+
+.contact-form .btn-white {
+  width: 172px;
+  height: 72px;
+  padding-inline: var(--space-5);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #5a7eff 0%, var(--color-primary) 100%);
+  color: var(--white);
+  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.2);
+  font-size: 24px;
+  font-weight: 500;
+  gap: var(--space-2);
+}
+
+.contact-form .btn-white img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.contact-form__status {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.contact-form__status[data-state='success'] {
+  color: #8affc1;
+}
+
+.contact-form__status[data-state='error'] {
+  color: #ffb4b4;
+}
+
+/* Figma 稿是 1920 兩欄並排，但 1500px 以下欄寬就放不下 20px 的 placeholder
+   （「您的姓名或公司名稱（限15字）」需 283px，1440 只剩 255px、1280 只剩 180px，
+   右括號會被裁掉）。與其降字級不如提早改單欄——字級維持稿上的 20px。
+   外層的「左文案／右表單」兩欄版面不動，1024 以下才整組疊起來。 */
+@media (max-width: 1500px) {
+  .contact-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contact-section__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .contact-section__copy,
+  .contact-form {
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-section > .container {
+    width: calc(100% - 32px);
+  }
+
+  .contact-form {
+    padding: 0;
+  }
+
+  .contact-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form__input {
+    height: 64px;
+    font-size: 16px;
+  }
+
+  .contact-form__input-wrap .contact-form__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .contact-form__input-wrap .contact-form__input {
+    padding-left: 65px;
+  }
+}

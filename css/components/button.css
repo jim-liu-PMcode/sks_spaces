@@ -1,0 +1,72 @@
+/* ==========================================================================
+   button.css — 共用按鈕樣式
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 64px;
+  padding-inline: var(--space-5);
+  border-radius: 999px;
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: #1d4fd1;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-dark);
+  border: 1px solid var(--line);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-white {
+  background: var(--white);
+  color: var(--color-primary);
+}
+
+.btn-white:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+.btn-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+@media (max-width: 640px) {
+  .btn {
+    height: 56px;
+    padding-inline: var(--space-4);
+    font-size: 15px;
+  }
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 756 454" preserveAspectRatio="none">
+  <defs>
+    <radialGradient
+      id="solution-card-overlay"
+      cx="0"
+      cy="0"
+      r="10"
+      gradientUnits="userSpaceOnUse"
+      gradientTransform="matrix(22.9 34.65 -40.594 26.828 409 190)"
+    >
+      <stop offset="0.53759" stop-color="#2563eb" stop-opacity="0" />
+      <stop offset="0.82895" stop-color="#2563eb" />
+    </radialGradient>
+  </defs>
+  <rect width="756" height="454" fill="url(#solution-card-overlay)" opacity="0.85" />
+</svg>

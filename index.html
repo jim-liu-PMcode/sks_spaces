@@ -1,0 +1,1316 @@
+<!-- 啟網站 python3 -m http.server 8000 -->
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SKS Security 新光保全｜次世代韌性保全平台 SPACES</title>
+    <meta
+      name="description"
+      content="SKS SPACES 是新光保全的次世代韌性保全平台，整合 AI 影像分析、IoT 感測、三網備援與 24 小時管制中心，讓每一個空間都能被理解、被預警、被持續守護。"
+    />
+
+    <!-- 先於所有 CSS 標記 JS 可用：reveal.css 只在 html.js 下隱藏 data-reveal（無 JS 時內容直接可見） -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <!-- 字型：Google Fonts CDN（中文字型由 Google 自動切 unicode-range 分片按需下載，
+       原自架 woff2 因子集化只含首頁字元，新頁面會缺字，故改用 CDN。詳見 tokens.css 開頭註解） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,700;0,800;1,800&display=swap"
+    />
+
+    <link
+      rel="stylesheet"
+      href="assets/css/tokens.css?v=20260902-container-1280"
+    />
+    <link rel="stylesheet" href="assets/css/base.css?v=20260902-eyebrow" />
+    <link
+      rel="stylesheet"
+      href="assets/css/components/header.css?v=20260909-header-scroll-4"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/components/footer.css?v=20260902-footer-faq"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/components/contact-form.css?v=20260903-form-bg"
+    />
+    <link rel="stylesheet" href="assets/css/components/button.css" />
+    <link
+      rel="stylesheet"
+      href="assets/css/components/faq.css?v=20260902-footer-faq"
+    />
+    <link rel="stylesheet" href="assets/css/components/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="assets/css/pages/home.css?v=20260910-streak-full"
+    />
+
+    <!-- JSON-LD 結構化資料（AEO）。注意：網域 https://fake-domain.to-be-replaced.example
+       為 placeholder，正式網域確定後需全站取代。 -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://fake-domain.to-be-replaced.example/#organization",
+            "name": "新光保全",
+            "alternateName": "SKS Security",
+            "url": "https://fake-domain.to-be-replaced.example/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://fake-domain.to-be-replaced.example/assets/images/shared/logo-black.svg"
+            },
+            "description": "新光保全次世代韌性保全平台。整合 AI 影像分析、IoT 感測、三網備援與 24 小時管制中心。",
+            "slogan": "Safe City, Smart Spaces"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://fake-domain.to-be-replaced.example/#website",
+            "url": "https://fake-domain.to-be-replaced.example/",
+            "name": "SKS Security 新光保全 SPACES",
+            "inLanguage": "zh-Hant",
+            "publisher": {
+              "@id": "https://fake-domain.to-be-replaced.example/#organization"
+            }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://fake-domain.to-be-replaced.example/#webpage",
+            "url": "https://fake-domain.to-be-replaced.example/",
+            "name": "SKS Security 新光保全｜次世代韌性保全平台 SPACES",
+            "alternativeHeadline": "未來的安全從今天開始 SPACES",
+            "description": "SKS SPACES 是新光保全的次世代韌性保全平台，整合 AI 影像分析、IoT 感測、三網備援與 24 小時管制中心，讓每一個空間都能被理解、被預警、被持續守護。",
+            "keywords": "AI 影像分析, IoT 感測, 三網備援, 24 小時管制中心, 智慧空間平台, 主動式風險管理, 次世代韌性保全",
+            "inLanguage": "zh-Hant",
+            "isPartOf": {
+              "@id": "https://fake-domain.to-be-replaced.example/#website"
+            },
+            "about": {
+              "@id": "https://fake-domain.to-be-replaced.example/#organization"
+            },
+            "hasPart": {
+              "@id": "https://fake-domain.to-be-replaced.example/#faq"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://fake-domain.to-be-replaced.example/#faq",
+            "inLanguage": "zh-Hant",
+            "isPartOf": {
+              "@id": "https://fake-domain.to-be-replaced.example/#webpage"
+            },
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "SKS SPACES 是什麼？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "SKS SPACES 是新光保全推出的次世代智慧空間管理平台，整合 AI 影像分析、IoT 感測、雲端平台與 24 小時專業保全服務。它不只是監視器或保全設備，而是結合智慧監控、門禁管理、環境感測與雲端管理，讓場域從「被動防護」升級為「主動預防」，打造更安全、更具韌性的智慧空間。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "SKS SPACES 和傳統保全有什麼不一樣？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "最大差別在「事前預防」。傳統保全多半在事件發生後才通報處理；SKS SPACES 透過 AI 影像分析與智慧感測提前偵測異常並即時告警，並整合雲端平台與 24 小時管制中心，讓安全管理從「事後處理」升級為「事前預防」。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "SKS SPACES 可以連動新光保全的保全服務嗎？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "可以。SKS SPACES 能結合新光保全 24 小時管制中心，當系統偵測到異常時由專業人員協助確認並提供即時應變支援，這也是它與「自己買監視器」最大的差別。"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <!-- data-header-theme 初值寫 transparent：首屏第一次繪製就是透明態，不會閃一下深藍。
+       捲離頂端後由 js/home/header-scroll.js 切成 light。關掉 JS 時透明態規則
+       （掛 html.js 前綴）不生效，退回不透明深藍 header，白 logo 白字仍可讀。 -->
+  <body data-page="home" data-header-theme="transparent">
+    <!-- 在 header 被解析出來之前就把主題定對。必須是 inline classic script：
+         header-scroll.js 是 ES module（預設 defer），要等 12 個 import 全部解析完
+         才跑得到，reload 停在頁面中段時 header 會有 0.4–1.2 秒停在透明態、
+         白 logo 與白字疊在白色內容上完全看不見。
+         「瀏覽器還原捲動位置」的時機不固定：實測 CPU 6× 節流下它發生在第一個 rAF
+         之後（rAF 讀到 scrollY 還是 0），所以單靠 rAF 接不到，必須再補一路 scroll
+         監聽——還原一定會觸發 scroll 事件。這個暫時的監聽由 header-scroll.js 在
+         IntersectionObserver 接手後移除（透過 window.__headerBootSync）。 -->
+    <script>
+      (function () {
+        var body = document.body;
+        var sync = function () {
+          body.dataset.headerTheme =
+            window.scrollY > 8 ? "light" : "transparent";
+        };
+        sync();
+        window.addEventListener("scroll", sync, { passive: true });
+        window.__headerBootSync = sync;
+        // 解析完成後捲動位置必定已還原，這時再定一次並開放 transition
+        document.addEventListener("DOMContentLoaded", function () {
+          sync();
+          requestAnimationFrame(function () {
+            sync();
+            body.dataset.headerReady = "";
+          });
+        });
+      })();
+    </script>
+
+    <a class="skip-link" href="#main-content">跳到主要內容</a>
+
+    <!-- Header：內容寫死於 HTML，漢堡選單互動由 assets/js/common/header.js 綁定。
+       「預約諮詢」CTA 帶 data-scroll-target="#site-contact-form"，點擊會平滑捲到頁底聯絡表單。 -->
+    <header class="site-header">
+      <div class="site-header__inner">
+        <!-- 白／黑兩張 logo 疊加，由 header.css 依 data-header-theme 交叉淡入。
+             兩張都用 alt=""：無障礙名稱已由 <a aria-label> 提供，避免重複朗讀。 -->
+        <a
+          class="site-header__logo site-header__logo--swap"
+          href="index.html"
+          aria-label="SKS Security 首頁"
+        >
+          <img
+            class="site-header__logo-img site-header__logo-img--on-dark"
+            src="assets/images/shared/logo-white.svg"
+            alt=""
+            width="272"
+            height="28"
+          />
+          <img
+            class="site-header__logo-img site-header__logo-img--on-light"
+            src="assets/images/shared/logo-black.svg"
+            alt=""
+            aria-hidden="true"
+            width="272"
+            height="28"
+          />
+        </a>
+        <nav class="site-header__nav" aria-label="主選單">
+          <a class="site-header__nav-link" href="index.html" aria-current="page"
+            >首頁</a
+          ><a
+            class="site-header__nav-link"
+            href="assets/temporary/products.html"
+            target="_blank"
+            rel="noopener"
+            aria-label="產品介紹（另開新分頁）"
+            >產品介紹</a
+          ><a
+            class="site-header__nav-link"
+            href="assets/temporary/solutions.html"
+            target="_blank"
+            rel="noopener"
+            aria-label="解決方案（另開新分頁）"
+            >解決方案</a
+          ><a
+            class="site-header__nav-link"
+            href="assets/temporary/faq.html"
+            target="_blank"
+            rel="noopener"
+            aria-label="FAQ（另開新分頁）"
+            >FAQ</a
+          ><a
+            class="site-header__nav-link"
+            href="assets/temporary/media.html"
+            target="_blank"
+            rel="noopener"
+            aria-label="媒體報導（另開新分頁）"
+            >媒體報導</a
+          >
+        </nav>
+        <div class="site-header__actions">
+          <a
+            class="site-header__cta"
+            href="#site-contact-form"
+            data-scroll-target="#site-contact-form"
+            >預約諮詢</a
+          >
+          <button
+            class="site-header__burger"
+            type="button"
+            aria-label="開啟選單"
+            aria-expanded="false"
+          >
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- ============================================================
+         1. Hero
+         ============================================================ -->
+      <section class="hero" aria-label="首頁主視覺">
+        <!-- header 透明↔白底的偵測點：高度 8px 就是切換門檻（見 home.css）。
+             用 IntersectionObserver 觀察它，不必掛 scroll listener。 -->
+        <span
+          class="hero__scroll-sentinel"
+          data-header-sentinel
+          aria-hidden="true"
+        ></span>
+        <div class="hero__bg">
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src="assets/videos/home/home-hero1.mp4" type="video/mp4" />
+          </video>
+          <!-- Figma 51:72：藍色漸層光帶，疊在影片上並往下超出影片 138px。
+               稿上是一張 rotate(90°) 的半透明 PNG＋blur(20px)，這裡以等值的
+               linear-gradient 取代（線性漸層本身不需要 blur）。 -->
+          <div class="hero__bg-band" aria-hidden="true"></div>
+        </div>
+
+        <div class="hero__content">
+          <div class="hero__content-inner">
+            <h1 class="hero__title" data-reveal>
+              Intelligent Technology<br />That Simplifies Your World
+            </h1>
+            <p class="hero__subtitle" data-typewriter>
+              未來的安全從今天開始 SPACES
+            </p>
+          </div>
+        </div>
+
+        <!-- 裝置 mockup 底圖常駐（不淡出），影片貼合各自螢幕區、保留淡入（video-fade.js）。
+             外層 .hero__devices 是構圖的外接框，比例＝原 Figma 構圖在 hero 裡的外接矩形。
+             裝置改為相對這個框定位，桌機絕對定位疊在影片上、≤810px 改為一般排版接在文字下方，
+             兩種模式共用同一組內部百分比。詳見 home.css 的「1. Hero」區塊。 -->
+        <div class="hero__devices" aria-hidden="true">
+          <div class="hero__device hero__device--computer">
+            <img
+              class="hero__device-frame"
+              src="assets/images/home/hero-computer-device.png"
+              alt=""
+            />
+            <video autoplay muted loop playsinline preload="auto">
+              <source
+                src="assets/videos/home/home-computer.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <div class="hero__device hero__device--phone">
+            <img
+              class="hero__device-frame"
+              src="assets/images/home/hero-phone-device.png"
+              alt=""
+            />
+            <video autoplay muted loop playsinline preload="auto">
+              <source
+                src="assets/videos/home/home-phone.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         2. 數字統計條
+         ============================================================ -->
+      <section class="section stats" aria-label="服務數據">
+        <div class="container">
+          <div class="stats__grid" data-reveal>
+            <div class="stat">
+              <p class="stat__number">
+                <span data-count-target="100">0</span>k+
+              </p>
+              <p class="stat__label">全台守護場域</p>
+            </div>
+            <div class="stat">
+              <p class="stat__number">
+                <span data-count-target="24">0</span
+                ><span class="stat__number-suffix stat__number-suffix--sm"
+                  >小時</span
+                >
+              </p>
+              <p class="stat__label">雲端儲存</p>
+            </div>
+            <div class="stat">
+              <p class="stat__number">
+                <span data-count-target="30">0</span
+                ><span class="stat__number-suffix">天</span>
+              </p>
+              <p class="stat__label">全天候守護</p>
+            </div>
+            <div class="stat">
+              <p class="stat__number">
+                <span data-count-target="3">0</span
+                ><span class="stat__number-suffix">網</span>
+              </p>
+              <p class="stat__label">備援自動切換</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         3–5 共用背景影片帶：intro / spaces-app / cards3 共用 home-hero3
+         hero3 是 intro-light-bg.webp 的動態版；影片鋪滿整帶隨頁面捲動。
+         回復原狀＝刪掉本 wrapper 的開闔標籤 + home.css 尾端同名區塊。
+         ============================================================ -->
+      <div class="story-band">
+        <div class="story-band__bg" aria-hidden="true">
+          <video
+            class="story-band__video"
+            data-lazy-video
+            data-src="assets/videos/home/home-hero3.mp4"
+            muted
+            loop
+            playsinline
+            preload="none"
+          ></video>
+        </div>
+        <div class="story-band__content">
+          <!-- ============================================================
+         3. 影片 / 介紹區塊
+         ============================================================ -->
+          <section class="section intro" aria-label="SPACES 介紹">
+            <div class="intro__bg" aria-hidden="true"></div>
+            <div class="container">
+              <div class="intro__inner">
+                <div class="intro__player" data-reveal>
+                  <!-- AI 介紹影片：延遲載入（見 lazy-video.js），捲動接近時才開始下載並播放 -->
+                  <video
+                    data-lazy-video
+                    data-src="assets/videos/home/home-ai-video.mp4"
+                    muted
+                    loop
+                    playsinline
+                    preload="none"
+                  ></video>
+                </div>
+                <div data-reveal>
+                  <h2 class="intro__title">未來的安全從今天開始<br />SPACES</h2>
+                  <p class="intro__desc">
+                    SKS SPACES 是新光保全的次世代韌性保全平台，整合 AI
+                    影像分析、IoT 感測、三網備援與 24
+                    小時管制中心，讓每一個空間都能被理解、被預警、被持續守護。
+                  </p>
+                  <a
+                    class="btn btn-primary"
+                    href="assets/temporary/products.html"
+                    target="_blank"
+                    ><img
+                      class="btn-icon"
+                      src="assets/images/shared/icon-arrow-c.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width="24"
+                      height="24"
+                    />立即了解</a
+                  >
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================
+         4. SPACES App「智慧管理，盡在掌握」
+         ============================================================ -->
+          <section class="section spaces-app" aria-label="SPACES App">
+            <!-- 2026-09-09：原本這裡有 .spaces-app__bg（#eef3ff 底 + home-hero2.mp4），
+             已改由外層 .story-band 的 hero3 統一提供背景，整段連同影片檔一併移除。 -->
+            <div class="container">
+              <div class="spaces-app__inner">
+                <div data-reveal="left">
+                  <p class="eyebrow">SPACES App</p>
+                  <h2 class="spaces-app__title">智慧管理，盡在掌握</h2>
+                  <p class="spaces-app__desc">
+                    一支手機，掌握所有空間。即時影像、門禁管理、事件推播與雲端回放，隨時隨地守護每一個場域。iOS
+                    / Android 免費下載。
+                  </p>
+                  <ul class="spaces-app__checklist">
+                    <li
+                      class="spaces-app__checklist-item"
+                      data-reveal
+                      style="--reveal-delay: 0.15s"
+                    >
+                      <img
+                        src="assets/images/shared/icon-check-a.svg"
+                        alt=""
+                        aria-hidden="true"
+                      />
+                      <span>即時監控 — 最多 4 路畫面同時查看</span>
+                    </li>
+                    <li
+                      class="spaces-app__checklist-item"
+                      data-reveal
+                      style="--reveal-delay: 0.25s"
+                    >
+                      <img
+                        src="assets/images/shared/icon-check-a.svg"
+                        alt=""
+                        aria-hidden="true"
+                      />
+                      <span>異常推播 — 事件立即通知，不錯過</span>
+                    </li>
+                    <li
+                      class="spaces-app__checklist-item"
+                      data-reveal
+                      style="--reveal-delay: 0.35s"
+                    >
+                      <img
+                        src="assets/images/shared/icon-check-a.svg"
+                        alt=""
+                        aria-hidden="true"
+                      />
+                      <span>遠端門禁 — 一鍵解鎖、臨時授權</span>
+                    </li>
+                  </ul>
+                </div>
+                <!-- 每支手機是兩層：-device.png 是機殼（螢幕處為純黑），
+                 -screen.png 是 App 畫面，用 absolute 疊在機殼的黑色玻璃上。
+                 偏移量由兩張 PNG 的原生像素換算而來，見 home.css 的 .spaces-app__phone-screen -->
+                <div class="spaces-app__phones" data-reveal="right">
+                  <div class="spaces-app__phone spaces-app__phone--1">
+                    <img
+                      class="spaces-app__phone-device"
+                      src="assets/images/home/spaces-phone1-device.png"
+                      alt=""
+                      aria-hidden="true"
+                      width="448"
+                      height="473"
+                    />
+                    <img
+                      class="spaces-app__phone-screen"
+                      src="assets/images/home/spaces-phone1-screen.png"
+                      alt="SPACES App 場域總覽畫面示意"
+                      width="446"
+                      height="481"
+                    />
+                  </div>
+                  <div class="spaces-app__phone spaces-app__phone--2">
+                    <img
+                      class="spaces-app__phone-device"
+                      src="assets/images/home/spaces-phone2-device.png"
+                      alt=""
+                      aria-hidden="true"
+                      width="204"
+                      height="491"
+                    />
+                    <img
+                      class="spaces-app__phone-screen"
+                      src="assets/images/home/spaces-phone2-screen.png"
+                      alt="SPACES App 主機狀態與天氣資訊畫面示意"
+                      width="178"
+                      height="477"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================
+         5. 三卡 hover（純 CSS，不用 JS）
+         ============================================================ -->
+          <section class="section cards3" aria-label="核心價值">
+            <div class="container">
+              <div class="cards3__layout">
+                <div class="cards3__grid" data-reveal>
+                  <article class="cards3__card">
+                    <!-- Figma 無對應獨立圖示素材，暫用手繪等義 inline SVG 替代 -->
+                    <svg
+                      class="cards3__card-icon"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M12 3L2 20h20L12 3z"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M12 10v4M12 17h.01"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <h3 class="cards3__card-title">主動式風險管理</h3>
+                    <p class="cards3__card-desc">
+                      從異常偵測、即時告警到事件處理，全面降低營運風險。
+                    </p>
+                  </article>
+                  <article class="cards3__card">
+                    <svg
+                      class="cards3__card-icon"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9 12l2 2 4-4"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <h3 class="cards3__card-title">次世代韌性保全</h3>
+                    <p class="cards3__card-desc">
+                      即使斷網、停電或設備異常，關鍵資料與安全機制仍持續運作。
+                    </p>
+                  </article>
+                  <article class="cards3__card">
+                    <svg
+                      class="cards3__card-icon"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M7 18a4 4 0 01-1-7.9A5 5 0 0115.5 8 4.5 4.5 0 0117 17H7z"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M10 12h4M10 15h3"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <h3 class="cards3__card-title">可信任的證據</h3>
+                    <p class="cards3__card-desc">
+                      保留可追溯的事件影像與紀錄，滿足稽核與法務舉證需求。
+                    </p>
+                  </article>
+                </div>
+
+                <div class="cards3__intro" data-reveal>
+                  <p class="eyebrow eyebrow--normal-case">What's SPACES</p>
+                  <h2 class="section-title cards3__intro-title">
+                    不只是監視器,而是主動預防的智慧空間平台
+                  </h2>
+                  <p class="section-desc">
+                    SPACES 結合 AI 影像分析、IoT
+                    感測設備與雲端服務，提供從安全監控、防盜防災到空間管理的一站式解決方案，讓安全管理從「被動反應」走向「主動預防」。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- /.story-band__content -->
+      </div>
+      <!-- /.story-band -->
+
+      <!-- ============================================================
+         6. Resilience
+         ============================================================ -->
+      <section class="section resilience" aria-label="Resilience">
+        <!-- 光軌動態版（hero4）：取代原 .resilience::before 的靜態 webp，
+             沿用同一組 Figma 座標與 mix-blend-mode: screen，藍色漸層不受影響 -->
+        <div class="resilience__streak" aria-hidden="true">
+          <video
+            data-lazy-video
+            data-src="assets/videos/home/home-hero4.mp4"
+            muted
+            loop
+            playsinline
+            preload="none"
+          ></video>
+        </div>
+        <div class="container">
+          <div class="resilience__inner">
+            <div data-reveal>
+              <p class="eyebrow eyebrow--normal-case resilience__eyebrow">
+                Resilience
+              </p>
+              <h2 class="resilience__title">
+                為什麼說 SPACES 是「韌性」保全？
+              </h2>
+              <p class="resilience__desc">
+                安全最大的風險，不是設備故障，而是在關鍵時刻失去能力。SPACES
+                透過三網備援、UPS
+                備電、本地錄影與雲端同步，確保重要事件不因停電或斷網而遺失。
+              </p>
+
+              <div class="resilience__feature">
+                <img
+                  src="assets/images/shared/icon-res-wifi.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <div>
+                  <p class="resilience__feature-title">三網備援自動切換</p>
+                  <p class="resilience__feature-desc">
+                    Wi-Fi／有線／LTE，一條線斷了，系統自己換另一條繼續錄，不靠單一網路撐場。
+                  </p>
+                </div>
+              </div>
+              <div class="resilience__feature">
+                <img
+                  src="assets/images/shared/icon-res-7.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <div>
+                  <p class="resilience__feature-title">斷網續錄</p>
+                  <p class="resilience__feature-desc">
+                    主機在本地端持續錄影至 Micro SD
+                    卡，並發送斷線通知；持續保存影像，恢復後同步保存可信任紀錄。
+                  </p>
+                </div>
+              </div>
+              <div class="resilience__feature">
+                <img
+                  src="assets/images/shared/icon-res-ups.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <div>
+                  <p class="resilience__feature-title">UPS 停電不中斷</p>
+                  <p class="resilience__feature-desc">
+                    主機內建 UPS 備用電源，停電後可維持約 4–8
+                    小時運作，並立即發送停電通知。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Figma node 59:1037：中央同心圓與四組專業服務 callout -->
+            <div class="resilience__orbit-col">
+              <div class="resilience__orbit-intro" data-reveal>
+                <p class="eyebrow eyebrow--normal-case resilience__eyebrow">
+                  Ecosystem
+                </p>
+                <h3 class="resilience__title">
+                  設備只是起點，智慧服務才是價值
+                </h3>
+                <p class="resilience__desc">
+                  SPACES 串聯設備、平台、AI
+                  與專業服務，打造完整的智慧安防生態系。
+                </p>
+              </div>
+              <div class="resilience__orbit-stage">
+                <div class="resilience__orbit" data-resilience-orbit>
+                  <div class="resilience__rings" aria-hidden="true">
+                    <div class="resilience__ring"></div>
+                    <div class="resilience__ring resilience__ring--2"></div>
+                    <div class="resilience__ring resilience__ring--3"></div>
+                  </div>
+                  <div class="resilience__ring resilience__ring--core">
+                    <img
+                      src="assets/images/shared/logo-black.svg"
+                      alt="SKS SPACES"
+                    />
+                  </div>
+
+                  <div class="resilience__callout resilience__callout--top">
+                    <span class="resilience__callout-icon"
+                      ><img
+                        src="assets/images/shared/icon-res-10.svg"
+                        alt=""
+                        aria-hidden="true"
+                    /></span>
+                    <div class="resilience__callout-copy">
+                      <p class="resilience__callout-title">專業服務團隊</p>
+                      <p class="resilience__callout-sub">現場支援設備維護</p>
+                    </div>
+                  </div>
+                  <div class="resilience__callout resilience__callout--right">
+                    <span class="resilience__callout-icon"
+                      ><img
+                        src="assets/images/shared/icon-res-9.svg"
+                        alt=""
+                        aria-hidden="true"
+                    /></span>
+                    <div class="resilience__callout-copy">
+                      <p class="resilience__callout-title">24H 管制中心</p>
+                      <p class="resilience__callout-sub">
+                        24H 監控異常事件處理
+                      </p>
+                    </div>
+                  </div>
+                  <div class="resilience__callout resilience__callout--bottom">
+                    <span class="resilience__callout-icon"
+                      ><img
+                        src="assets/images/shared/icon-res-11.svg"
+                        alt=""
+                        aria-hidden="true"
+                    /></span>
+                    <div class="resilience__callout-copy">
+                      <p class="resilience__callout-title">APP / WEB</p>
+                      <p class="resilience__callout-sub">
+                        APP 遠端操控即時推播
+                      </p>
+                    </div>
+                  </div>
+                  <div class="resilience__callout resilience__callout--left">
+                    <span class="resilience__callout-icon"
+                      ><img
+                        src="assets/images/shared/icon-res-12.svg"
+                        alt=""
+                        aria-hidden="true"
+                    /></span>
+                    <div class="resilience__callout-copy">
+                      <p class="resilience__callout-title">SPACES Cloud</p>
+                      <p class="resilience__callout-sub">
+                        AI 事件分析設備集中管理
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         7. Solutions 卡片區（手動捲動，非自動輪播）
+         ============================================================ -->
+      <section class="section solutions" aria-label="Solutions">
+        <div class="container">
+          <div class="solutions__head" data-reveal>
+            <div>
+              <p class="eyebrow eyebrow--normal-case">Solutions</p>
+              <h2 class="section-title">不同場域，不同需求，SPACES 都接得住</h2>
+            </div>
+          </div>
+
+          <!-- TODO: Figma 本身除「社區」特色卡外，其餘 4 張卡副標題文字皆重複顯示相同的
+             「辦公區域監控／智慧對講門禁／雲端安防管理」（Figma 原稿本身尚未依場域分別填寫），
+             依計畫決策 8 原樣呈現，待 lexi 之後提供正式文案 -->
+          <div class="solutions__scroller-wrap" data-reveal>
+            <button
+              class="solutions__arrow solutions__arrow--prev"
+              type="button"
+              aria-label="向左捲動"
+            >
+              <img
+                src="assets/images/shared/icon-arrow-c.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+            <div class="solutions__scroller">
+              <a
+                class="solutions__card"
+                href="https://www.google.com/"
+                draggable="false"
+                target="_blank"
+                rel="noopener"
+                aria-label="查看辦公解決方案（另開新分頁）"
+              >
+                <div class="solutions__card-media">
+                  <!-- 改用 <img loading="lazy">：原本是 inline style 的 CSS 背景圖，
+                       而 loading="lazy" 只作用在 <img>／<iframe>，背景圖一律 eager。
+                       這一區在摺線下（第 6 個 section），五張合計 630KB。 -->
+                  <img
+                    class="solutions__card-img"
+                    src="assets/images/home/solution-office.jpg"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="solutions__card-body">
+                  <span class="solutions__card-label">辦公</span>
+                  <span class="solutions__card-sub"
+                    >辦公區域監控 / 智慧對講門禁 / 雲端安防管理</span
+                  >
+                </div>
+              </a>
+              <a
+                class="solutions__card"
+                href="https://www.google.com/"
+                draggable="false"
+                target="_blank"
+                rel="noopener"
+                aria-label="查看社區解決方案（另開新分頁）"
+              >
+                <div class="solutions__card-media">
+                  <!-- 改用 <img loading="lazy">：原本是 inline style 的 CSS 背景圖，
+                       而 loading="lazy" 只作用在 <img>／<iframe>，背景圖一律 eager。
+                       這一區在摺線下（第 6 個 section），五張合計 630KB。 -->
+                  <img
+                    class="solutions__card-img"
+                    src="assets/images/home/solution-community.jpg"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="solutions__card-body">
+                  <span class="solutions__card-label">社區</span>
+                  <span class="solutions__card-sub"
+                    >公共區域監控 / 智慧對講門禁 / 雲端安防管理</span
+                  >
+                </div>
+              </a>
+              <a
+                class="solutions__card"
+                href="https://www.google.com/"
+                draggable="false"
+                target="_blank"
+                rel="noopener"
+                aria-label="查看住家解決方案（另開新分頁）"
+              >
+                <div class="solutions__card-media">
+                  <!-- 改用 <img loading="lazy">：原本是 inline style 的 CSS 背景圖，
+                       而 loading="lazy" 只作用在 <img>／<iframe>，背景圖一律 eager。
+                       這一區在摺線下（第 6 個 section），五張合計 630KB。 -->
+                  <img
+                    class="solutions__card-img"
+                    src="assets/images/home/solution-home.jpg"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="solutions__card-body">
+                  <span class="solutions__card-label">住家</span>
+                  <span class="solutions__card-sub"
+                    >辦公區域監控 / 智慧對講門禁 / 雲端安防管理</span
+                  >
+                </div>
+              </a>
+              <a
+                class="solutions__card"
+                href="https://www.google.com/"
+                draggable="false"
+                target="_blank"
+                rel="noopener"
+                aria-label="查看金融解決方案（另開新分頁）"
+              >
+                <div class="solutions__card-media">
+                  <!-- 改用 <img loading="lazy">：原本是 inline style 的 CSS 背景圖，
+                       而 loading="lazy" 只作用在 <img>／<iframe>，背景圖一律 eager。
+                       這一區在摺線下（第 6 個 section），五張合計 630KB。 -->
+                  <img
+                    class="solutions__card-img"
+                    src="assets/images/home/solution-finance.jpg"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="solutions__card-body">
+                  <span class="solutions__card-label">金融</span>
+                  <span class="solutions__card-sub"
+                    >辦公區域監控 / 智慧對講門禁 / 雲端安防管理</span
+                  >
+                </div>
+              </a>
+              <a
+                class="solutions__card"
+                href="https://www.google.com/"
+                draggable="false"
+                target="_blank"
+                rel="noopener"
+                aria-label="查看百貨解決方案（另開新分頁）"
+              >
+                <div class="solutions__card-media">
+                  <!-- 改用 <img loading="lazy">：原本是 inline style 的 CSS 背景圖，
+                       而 loading="lazy" 只作用在 <img>／<iframe>，背景圖一律 eager。
+                       這一區在摺線下（第 6 個 section），五張合計 630KB。 -->
+                  <img
+                    class="solutions__card-img"
+                    src="assets/images/home/solution-mall.jpg"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="solutions__card-body">
+                  <span class="solutions__card-label">百貨</span>
+                  <span class="solutions__card-sub"
+                    >辦公區域監控 / 智慧對講門禁 / 雲端安防管理</span
+                  >
+                </div>
+              </a>
+            </div>
+            <button
+              class="solutions__arrow solutions__arrow--next"
+              type="button"
+              aria-label="向右捲動"
+            >
+              <img
+                src="assets/images/shared/icon-arrow-c.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+
+          <div class="solutions__footer">
+            <a href="assets/temporary/solutions.html" target="_blank"
+              >查看六大場景解決方案 →</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         8. Process（維運服務）
+         ============================================================ -->
+      <section class="section process" aria-label="維運服務流程">
+        <!-- Figma 132:2201 的 halftone 網點底：MCP 取不到原始 fill，改用 CSS radial-gradient
+           復刻（無素材、不受 DPR 影響）。上下各溢出 70px，靠 mask 淡出避免壓到鄰區。 -->
+        <div class="process__halftone" aria-hidden="true"></div>
+
+        <div class="container">
+          <!-- data-reveal 刻意不掛在 .process__head 上：reveal.css 的 translateY 會讓它
+             變成絕對定位子孫的 containing block，裝飾層進場時會整組漂移。 -->
+          <div class="process__head">
+            <div class="process__head-text" data-reveal>
+              <p class="eyebrow eyebrow--normal-case process__eyebrow">
+                維運服務
+              </p>
+              <h2 class="section-title process__title">
+                維運服務 24 小時守護不間斷
+              </h2>
+              <!-- TODO: 此段說明文字在 Figma 原稿中為未完成的假字內容，原樣保留，
+                 待 lexi 之後提供正式文案 -->
+              <p class="section-desc process__desc">
+                文案中文假字文案中文假字文案中文假字文案中文假字…
+              </p>
+            </div>
+
+            <!-- 純裝飾層（Figma 132:2167 盾牌／132:2165 波浪／132:2166 柔光暈）。
+               132:2166 原稿是 blur(60px) + multiply，multiply 疊純白等於不作用，改用
+               CSS radial-gradient 直接畫柔邊，省一層 GPU 合成。 -->
+            <div class="process__visual" aria-hidden="true">
+              <span class="process__glow"></span>
+              <img
+                class="process__wave"
+                src="assets/images/home/process-wave.webp"
+                alt=""
+                width="2444"
+                height="500"
+                loading="lazy"
+                decoding="async"
+              />
+              <img
+                class="process__shield"
+                src="assets/images/home/process-shield.webp"
+                alt=""
+                width="1282"
+                height="1282"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+
+          <!-- TODO: 4 步驟說明內容在 Figma 原稿中為重複堆疊的佔位文字，依計畫決策 8 原樣呈現 -->
+          <ol class="process__capsule" data-reveal>
+            <li class="process__step">
+              <div class="process__step-body">
+                <p class="process__step-index">01</p>
+                <h3 class="process__step-title">需求諮詢</h3>
+                <p class="process__step-desc">
+                  了解場域需求與管理方式了解場域需求與管理方式了解場域需求與管理方式
+                </p>
+              </div>
+            </li>
+            <li class="process__step">
+              <div class="process__step-body">
+                <p class="process__step-index">02</p>
+                <h3 class="process__step-title">現場勘查</h3>
+                <p class="process__step-desc">
+                  專業團隊規劃最佳方案專業團隊規劃最佳方案專業團隊規劃最佳方案
+                </p>
+              </div>
+            </li>
+            <li class="process__step">
+              <div class="process__step-body">
+                <p class="process__step-index">03</p>
+                <h3 class="process__step-title">安裝規劃</h3>
+                <p class="process__step-desc">
+                  依場域客製設備配置依場域客製設備配置依場域客製設備配置依場域客製設備配置
+                </p>
+              </div>
+            </li>
+            <li class="process__step">
+              <div class="process__step-body">
+                <p class="process__step-index">04</p>
+                <h3 class="process__step-title">現場安裝</h3>
+                <p class="process__step-desc">
+                  設備安裝、系統設定設備安裝、系統設定設備安裝、系統設定設備安裝、系統設定
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         9. News（媒體報導）
+         ============================================================ -->
+      <section class="section news" aria-label="媒體報導">
+        <div class="container">
+          <div
+            data-reveal
+            style="margin-bottom: var(--space-6); text-align: center"
+          >
+            <p class="eyebrow eyebrow--normal-case">In the Media</p>
+            <h2 class="section-title">媒體報導</h2>
+          </div>
+
+          <!-- TODO: 第 2、3 則新聞在 Figma 原稿中文案完全相同，依計畫決策 8 原樣呈現，
+             待 lexi 之後提供正式的第三則新聞內容 -->
+          <div class="news__grid" data-reveal>
+            <article class="news__card">
+              <span class="news__card-icon" aria-hidden="true">
+                <img
+                  src="assets/images/shared/icon-news-doc.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="44"
+                  height="44"
+                />
+              </span>
+              <div class="news__card-body">
+                <p class="news__card-date">2026 · 智慧城市展</p>
+                <h3 class="news__card-title">
+                  搶攻智慧城市商機！新光保全深耕智慧金融布局 導入 SKS SPACES
+                  系統
+                </h3>
+                <p class="news__card-desc">
+                  以「Safe City, Smart
+                  Spaces」為主題參展，推動安全服務由被動監控升級為主動式風險管理。
+                </p>
+              </div>
+              <a class="news__card-link" href="news.html">閱讀全文 →</a>
+            </article>
+            <article class="news__card">
+              <span class="news__card-icon" aria-hidden="true">
+                <img
+                  src="assets/images/shared/icon-news-doc.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="44"
+                  height="44"
+                />
+              </span>
+              <div class="news__card-body">
+                <p class="news__card-date">2026 · 智慧城市展</p>
+                <h3 class="news__card-title">
+                  新光保全 5 大沉浸式 AI 應用展區 打造全方位空間安全規劃
+                </h3>
+                <p class="news__card-desc">
+                  呈現安防科技跨域整合藍圖，亮點為次世代韌性保全系統，整合影像辨識與
+                  AI 分析。
+                </p>
+              </div>
+              <a class="news__card-link" href="news.html">閱讀全文 →</a>
+            </article>
+            <article class="news__card">
+              <span class="news__card-icon" aria-hidden="true">
+                <img
+                  src="assets/images/shared/icon-news-doc.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="44"
+                  height="44"
+                />
+              </span>
+              <div class="news__card-body">
+                <p class="news__card-date">2026 · 智慧城市展</p>
+                <h3 class="news__card-title">
+                  新光保全 5 大沉浸式 AI 應用展區 打造全方位空間安全規劃
+                </h3>
+                <p class="news__card-desc">
+                  呈現安防科技跨域整合藍圖，亮點為次世代韌性保全系統，整合影像辨識與
+                  AI 分析。
+                </p>
+              </div>
+              <a class="news__card-link" href="news.html">閱讀全文 →</a>
+            </article>
+          </div>
+
+          <div class="news__footer">
+            <a href="assets/temporary/media.html" target="_blank"
+              >前往新聞中心 →</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         11. 表單區塊：由 assets/js/common/contact-form.js 於執行期注入
+         （夾在 News 與 FAQ 之間，非 Footer 前後，符合 Figma node 151:1147 位置）
+         ============================================================ -->
+      <div id="site-contact-form"></div>
+
+      <!-- ============================================================
+         12. FAQ 手風琴
+         ============================================================ -->
+      <section class="section faq" aria-label="常見問題">
+        <div class="container">
+          <div
+            data-reveal
+            style="margin-bottom: var(--space-6); text-align: center"
+          >
+            <p class="eyebrow eyebrow--normal-case">FAQ · 常見問題</p>
+            <h2 class="section-title">有問題？我們先幫你想好了</h2>
+          </div>
+
+          <div class="faq__list" data-reveal>
+            <details class="faq__item">
+              <summary>
+                <span class="faq__question">SKS SPACES 是什麼？</span>
+                <span class="faq__toggle" aria-hidden="true">＋</span>
+              </summary>
+              <div class="faq__answer-wrap">
+                <p class="faq__answer">
+                  SKS SPACES 是新光保全推出的次世代智慧空間管理平台，整合 AI
+                  影像分析、IoT 感測、雲端平台與 24
+                  小時專業保全服務。它不只是監視器或保全設備，而是結合智慧監控、門禁管理、環境感測與雲端管理，讓場域從「被動防護」升級為「主動預防」，打造更安全、更具韌性的智慧空間。
+                </p>
+              </div>
+            </details>
+            <details class="faq__item">
+              <summary>
+                <span class="faq__question"
+                  >SKS SPACES 和傳統保全有什麼不一樣？</span
+                >
+                <span class="faq__toggle" aria-hidden="true">＋</span>
+              </summary>
+              <div class="faq__answer-wrap">
+                <p class="faq__answer">
+                  最大差別在「事前預防」。傳統保全多半在事件發生後才通報處理；SKS
+                  SPACES 透過 AI
+                  影像分析與智慧感測提前偵測異常並即時告警，並整合雲端平台與 24
+                  小時管制中心，讓安全管理從「事後處理」升級為「事前預防」。
+                </p>
+              </div>
+            </details>
+            <details class="faq__item">
+              <summary>
+                <span class="faq__question"
+                  >SKS SPACES 可以連動新光保全的保全服務嗎？</span
+                >
+                <span class="faq__toggle" aria-hidden="true">＋</span>
+              </summary>
+              <div class="faq__answer-wrap">
+                <p class="faq__answer">
+                  可以。SKS SPACES 能結合新光保全 24
+                  小時管制中心，當系統偵測到異常時由專業人員協助確認並提供即時應變支援，這也是它與「自己買監視器」最大的差別。
+                </p>
+              </div>
+            </details>
+          </div>
+
+          <div class="faq__footer" data-reveal>
+            <a
+              class="btn btn-outline"
+              href="assets/temporary/faq.html"
+              target="_blank"
+              >查看完整常見問題</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer：內容寫死於 HTML（無互動） -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__top">
+          <div>
+            <a
+              class="site-footer__logo"
+              href="index.html"
+              aria-label="SKS Security 首頁"
+            >
+              <img
+                src="assets/images/shared/logo-white.svg"
+                alt="SKS Security Logo"
+                width="200"
+                height="20"
+              />
+            </a>
+            <p class="site-footer__brand-desc">
+              新光保全次世代韌性保全平台。整合 AI 影像分析、IoT 感測、三網備援與
+              24 小時管制中心。
+            </p>
+          </div>
+          <div class="site-footer__columns">
+            <div class="site-footer__col">
+              <p class="site-footer__col-title">產品</p>
+              <ul class="site-footer__col-list">
+                <li><a href="products.html">系統主機</a></li>
+                <li><a href="products.html">IP Camera</a></li>
+                <li><a href="products.html">感測器</a></li>
+                <li><a href="products.html">APP / Web 後台</a></li>
+              </ul>
+            </div>
+            <div class="site-footer__col">
+              <p class="site-footer__col-title">解決方案</p>
+              <ul class="site-footer__col-list">
+                <li><a href="solutions.html">金融 · 零售</a></li>
+                <li><a href="solutions.html">倉儲物流 · 辦公</a></li>
+                <li><a href="solutions.html">社區 · 住家</a></li>
+              </ul>
+            </div>
+            <div class="site-footer__col">
+              <p class="site-footer__col-title">公司</p>
+              <ul class="site-footer__col-list">
+                <li><a href="faq.html">FAQ</a></li>
+                <li><a href="news.html">媒體報導</a></li>
+                <li>
+                  <a
+                    href="#site-contact-form"
+                    data-scroll-target="#site-contact-form"
+                    >預約諮詢</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="site-footer__bottom">
+          <span>© 2026 新光保全 SKS Security. All rights reserved.</span>
+          <span>Safe City, Smart Spaces</span>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      type="module"
+      src="assets/js/home/main.js?v=20260909-header-scroll-3"
+    ></script>
+  </body>
+</html>
