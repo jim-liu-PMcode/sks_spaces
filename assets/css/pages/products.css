@@ -1,0 +1,618 @@
+/* ==========================================================================
+   products.css — 產品介紹頁專屬樣式
+   共用層請改 tokens.css / base.css / components/*.css，本檔只寫本頁區塊。
+
+   對稿說明：Figma 稿寬 1920，內容寬 1440。本專案 .container 是 1280，
+   等於把 1440 的設計等比縮到 1280，因此字級與間距都按比例調整（約 0.89 倍），
+   不是照抄 Figma 的絕對 px。斷點沿用全站的 1024px / 640px。
+
+   .eyebrow 共用樣式已對齊 Figma（16px / letter-spacing 0 / line-height 24px），
+   本頁四處 eyebrow 皆為 UPPER，直接走 base 預設，本檔不需覆寫。
+   ========================================================================== */
+
+/* ==========================================================================
+   0. 本頁 section 標題／說明覆寫（Figma 145:270、145:409，不動 base.css 全站值）
+   ========================================================================== */
+/* Figma 145:409 是 36px/54px（lh 1.5）。36px 是 1920 稿面值，寫死小螢幕會爆版，
+   因此用 clamp 收斂，上限剛好落在 36px。 */
+body[data-page='products'] .section-title {
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); /* 24px → 36px */
+  line-height: 1.5;
+  color: var(--text-heading);
+}
+
+/* 本頁副標（Figma 145:270）的字級／行高／顏色都與全域 .section-desc 不同，
+   依「值不一樣就不共用 class」的原則另開本頁專屬 class；
+   原本由 base.css 的 .section-head .section-desc 提供的三個版面屬性在這裡補回。 */
+.pd-section-desc {
+  margin-top: var(--space-2);
+  max-width: 760px;
+  margin-inline: auto;
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+/* ==========================================================================
+   1. Hero
+   ========================================================================== */
+.pd-hero {
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--space-8);
+  background-color: #e9eef7; /* 圖片載入前的底色，取背景圖平均色 */
+  background-image: url('../../images/products/hero-bg.webp');
+  background-size: cover;
+  background-position: center top;
+}
+
+.pd-hero__inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.pd-hero__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1.25rem + 2.1vw, 3.125rem); /* 28px → 50px */
+  line-height: 1.4;
+  color: var(--text-heading);
+}
+
+.pd-hero__subtitle {
+  margin-top: var(--space-2);
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: clamp(0.95rem, 0.85rem + 0.55vw, 1.375rem); /* 15px → 22px */
+  line-height: 1.8;
+  color: var(--text-heading);
+}
+
+.pd-hero__highlight {
+  margin-top: var(--space-4);
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(0.875rem, 0.8rem + 0.4vw, 1.125rem); /* 14px → 18px */
+  line-height: 1.45;
+  color: var(--color-primary);
+}
+
+/* 設備照拼貼：Figma 是 5 張圖各自絕對定位，改為整組匯出成一張圖，
+   用一般流排版縮放，避免寫死 px 定位。 */
+.pd-hero__devices {
+  position: relative;
+  margin-top: var(--space-6);
+  margin-inline: auto;
+  max-width: 1104px;
+  padding-inline: var(--space-4);
+}
+
+.pd-hero__devices img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 1024px) {
+  .pd-hero {
+    padding-top: var(--space-7);
+  }
+}
+
+@media (max-width: 640px) {
+  .pd-hero {
+    padding-top: var(--space-6);
+  }
+
+  .pd-hero__devices {
+    margin-top: var(--space-5);
+  }
+
+  /* 副標的 <br> 是為了對齊 Figma 桌機版的兩行斷句，窄螢幕改讓文字自然換行 */
+  .pd-hero__subtitle br {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   2. 硬體設備（分類頁籤 + 產品輪播）
+   ========================================================================== */
+/* 卡片列要能一路捲到視窗邊緣（比照首頁 .solutions 的做法），因此本區塊解除
+   .container 的版心限制，左右留白改由捲動列自己的 padding 負責；
+   非捲動的子元素（.section-head／.pd-tabs）再各自把 1280 版心補回來。 */
+.pd-hardware > .container {
+  max-width: none;
+  padding-inline: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.pd-hardware > .container > .section-head,
+.pd-hardware > .container > .pd-tabs {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* 區塊底部分隔線原本是 .container 的 border-bottom，版心解除後會跟著變滿版，
+   改用 ::after 自己畫一條 1280 寬的線，視覺與改造前相同（間距一併搬過來）。 */
+.pd-hardware > .container::after {
+  content: '';
+  display: block;
+  max-width: var(--container-max);
+  margin: var(--space-8) auto 0;
+  border-top: 1px solid var(--line);
+}
+
+/* ---- 分類頁籤 ---- */
+/* 外觀在 components/tabs.css 的 .tabs--pill，這裡只處理本頁的版面位置與字級 */
+.pd-tabs {
+  margin-bottom: var(--space-5);
+}
+
+/* Figma 145:271：18px/29px、Medium。padding／圓角／顏色／hover 全部沿用共用元件。 */
+.pd-tabs .tabs__tab {
+  font-size: 18px;
+  line-height: 29px;
+}
+
+/* ---- 產品輪播 ---- */
+/* --pd-gutter 是捲動列的左右留白，走比例式：Figma 1920 稿面左留白實測 240px
+   = 12.5vw（1440→180px、1280→160px）；640 以下另外收到 24px（見該斷點）。
+   箭頭以 gutter 為基準往內縮一個半徑，圓心正好騎在卡片列的左／右緣（同 Figma）。 */
+.pd-products {
+  --pd-gutter: clamp(24px, 12.5vw, 240px);
+  position: relative;
+}
+
+.pd-products__panel {
+  position: relative;
+}
+
+/* 右側淡出遮罩，取代 Figma 用一張漸層圖做的效果。版心解除後這層貼齊視窗右緣。
+   Figma 1920 稿是 888px 寬（= 46.25vw）且前 50% 全透明，真正會壓到內容的只有
+   右半 444px，照抄比例即可；窄螢幕用 clamp 收到 96px 下限。 */
+.pd-products__panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: clamp(96px, 46.25vw, 888px);
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 50%, var(--white) 100%);
+}
+
+.pd-products__scroller {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  cursor: grab;
+  /* 左右 padding 當 gutter（不能用 margin，否則捲動區又被關回版心、卡片碰不到視窗邊）；
+     上下 8px 是留空間避免卡片 hover 陰影被裁掉。 */
+  padding: 8px var(--pd-gutter);
+}
+
+.pd-products__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.pd-products__scroller:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-md);
+}
+
+.pd-products__scroller.is-dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+}
+
+.pd-products__arrow {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--white);
+  box-shadow: 0 16px 16px rgba(12, 12, 13, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.pd-products__arrow--prev {
+  left: calc(var(--pd-gutter) - 28px);
+}
+
+.pd-products__arrow--next {
+  right: calc(var(--pd-gutter) - 28px);
+}
+
+.pd-products__arrow:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.pd-products__arrow:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.pd-products__arrow img {
+  width: 24px;
+  height: 24px;
+}
+
+.pd-products__arrow--prev img {
+  transform: scaleX(-1);
+}
+
+/* ---- 箭頭 disabled（已捲到端點）----
+   偵測邏輯在共用的 js/common/carousel.js，但外觀只放本頁：首頁 solutions 也會拿到
+   .is-disabled，那邊沒有對應樣式所以外觀完全不變。
+   icon 是 <img>，原始筆畫色 #2563eb；filter 調不出 Figma 的 #212327
+   （brightness(0) 只會得到純黑 #000），因此改用 mask-image + background-color 上色，
+   原本的 <img> 用 visibility 藏起來但保留版位。mask 在 2021 的 Chrome/Safari
+   只認 -webkit- 前綴，兩組都寫。 */
+.pd-products__arrow.is-disabled {
+  cursor: default;
+}
+
+/* disabled 時不再有 hover 的藍底變化 */
+.pd-products__arrow.is-disabled:hover {
+  background: var(--white);
+  border-color: var(--line);
+}
+
+.pd-products__arrow.is-disabled::after {
+  content: '';
+  position: absolute;
+  top: calc(50% - 12px);
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 24px;
+  background-color: var(--text-heading); /* #212327 */
+  -webkit-mask-image: url('../../images/shared/icon-arrow-c.svg');
+  mask-image: url('../../images/shared/icon-arrow-c.svg');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 24px 24px;
+  mask-size: 24px 24px;
+}
+
+.pd-products__arrow--prev.is-disabled::after {
+  transform: scaleX(-1);
+}
+
+.pd-products__arrow.is-disabled img {
+  visibility: hidden;
+}
+
+/* ---- 產品卡 ---- */
+.pd-card {
+  display: flex;
+  flex-direction: column;
+  /* Figma 1920 稿是固定 320px = 16.7vw；窄螢幕收到 232px */
+  flex: 0 0 clamp(232px, 16.7vw, 320px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Figma 只有第 1 張卡有陰影（稿面不一致）。依 lexi 確認統一為「hover 才有陰影」，
+   且不做首頁 solutions 卡那種展開變寬的 hover。 */
+.pd-card:hover,
+.pd-card:focus-visible {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+}
+
+.pd-card__media {
+  display: block;
+  background: var(--surface-soft);
+  border-radius: var(--radius-md);
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.pd-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pd-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex-grow: 1;
+  padding: var(--space-5) var(--space-4);
+}
+
+.pd-card__name {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); /* 18px → 22px */
+  line-height: 1.5;
+  color: var(--color-primary);
+}
+
+.pd-card__desc {
+  flex-grow: 1;
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: clamp(0.9375rem, 0.9rem + 0.3vw, 1.125rem); /* 15px → 18px */
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+.pd-card__spec {
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: clamp(0.9375rem, 0.9rem + 0.3vw, 1.125rem); /* 15px → 18px */
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  /* 12.5vw 在手機只有 ~49px，卡片會被壓太窄，這裡直接收到 24px */
+  .pd-products {
+    --pd-gutter: 24px;
+  }
+
+  .pd-hardware > .container > .section-head,
+  .pd-hardware > .container > .pd-tabs {
+    padding-inline: var(--space-3); /* 對齊全站 .container 在此斷點的 16px */
+  }
+
+  .pd-products__arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .pd-products__arrow--prev {
+    left: calc(var(--pd-gutter) - 22px);
+  }
+
+  .pd-products__arrow--next {
+    right: calc(var(--pd-gutter) - 22px);
+  }
+
+  /* 手機的 46.25vw 不到 180px 卻已經蓋掉半張卡，這裡維持固定 48px */
+  .pd-products__panel::after {
+    width: 48px;
+  }
+
+  .pd-hardware > .container::after {
+    margin-top: var(--space-6);
+  }
+}
+
+/* ==========================================================================
+   3. 軟體平台（純文字靜態區塊）
+   ========================================================================== */
+.pd-software .container {
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--line);
+}
+
+.pd-software__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.pd-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  background: var(--surface-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-5) var(--space-6);
+}
+
+.pd-panel__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pd-panel__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1.2rem + 0.55vw, 1.625rem); /* 22px → 26px */
+  line-height: 1.5;
+  color: var(--text-dark);
+}
+
+.pd-panel__sub {
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 0.9rem + 0.75vw, 1.5rem); /* 18px → 24px */
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+/* 條列：左側粗體標籤固定寬 64px（Figma 145:345 的 B 容器寬），右側說明以「—」開頭，
+   與 Figma 的兩欄結構一致；640px 以下改上下堆疊（該斷點取消固定寬）。
+   取捨：用 min-width 而不是死的 width／flex-basis——Web 後台那欄有「多場域管理」5 個字
+   （16px × 5 = 80px），硬鎖 64px 會直接壓到右側說明；min-width 讓 4 字的行照樣切齊 64px。 */
+.pd-featlist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex-grow: 1;
+}
+
+.pd-featlist__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-tc);
+  font-size: 16px;
+  line-height: 24px; /* Figma 145:345 */
+  color: var(--text-dark);
+}
+
+.pd-featlist__row dt {
+  flex: 0 0 auto;
+  min-width: 64px;
+  font-weight: 500;
+}
+
+.pd-featlist__row dd {
+  margin: 0;
+  color: var(--text-dark);
+}
+
+.pd-chip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-tc);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-note);
+}
+
+.pd-chip strong {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+@media (max-width: 1024px) {
+  .pd-software__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .pd-panel {
+    padding: var(--space-4);
+  }
+
+  .pd-featlist__row {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  /* 直排後固定寬沒有意義，反而會讓短標籤後面留一段空白 */
+  .pd-featlist__row dt {
+    min-width: 0;
+  }
+
+  .pd-software .container {
+    padding-bottom: var(--space-6);
+  }
+}
+
+/* ==========================================================================
+   4. 雲端錄影方案（純文字靜態區塊）
+   ========================================================================== */
+.pd-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.pd-table-wrap:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.pd-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-family: var(--font-tc);
+  text-align: left;
+}
+
+.pd-table thead th {
+  background: var(--line);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-dark);
+  padding: 12px var(--space-4);
+  height: 64px; /* Figma 145:412 的列高；靠 padding 只算得到 48px，這裡補到 64px */
+}
+
+.pd-table tbody th,
+.pd-table tbody td {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line);
+  font-size: clamp(0.9375rem, 0.9rem + 0.3vw, 1.125rem); /* 15px → 18px */
+  /* Figma 是 18px/28px；字級用 clamp 收斂但行高照抄 px，桌機才會剛好對到稿 */
+  line-height: 28px;
+}
+
+.pd-table tbody th {
+  font-weight: 700;
+  color: var(--text-heading);
+  white-space: nowrap;
+}
+
+.pd-table tbody td {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.pd-table thead th:nth-child(1),
+.pd-table tbody th {
+  width: 33.33%;
+}
+
+.pd-table thead th:nth-child(2),
+.pd-table tbody td:nth-child(2) {
+  width: 20%;
+  white-space: nowrap;
+}
+
+.pd-note {
+  margin-top: var(--space-4);
+  padding-inline: var(--space-2);
+  font-family: var(--font-tc);
+  font-size: 14px;
+  line-height: 27px; /* Figma 145:432 */
+  color: var(--text-note);
+}
+
+/* ==========================================================================
+   5. FAQ（結構與樣式沿用 components/faq.css，這裡只給區塊底色）
+   ========================================================================== */
+.faq {
+  background: var(--surface-soft);
+}
+
+/* ==========================================================================
+   減少動態偏好：關掉位移與平滑捲動
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .pd-products__scroller {
+    scroll-behavior: auto;
+  }
+}

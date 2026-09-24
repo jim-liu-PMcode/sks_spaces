@@ -1,0 +1,693 @@
+/* ==========================================================================
+   solutions.css — 解決方案頁專屬樣式
+   共用層請改 tokens.css / base.css / components/*.css，本檔只寫本頁區塊。
+
+   對稿說明：Figma 稿寬 1920、內容寬 1440，本專案 .container 是 1200，
+   等於把設計等比縮到 1200，字級與間距按比例調整（約 0.83 倍）。
+   斷點沿用全站的 1024px / 640px。
+   ========================================================================== */
+
+/* ==========================================================================
+   1. 頂部 Banner
+   ========================================================================== */
+.sl-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  min-height: clamp(360px, 34vw, 600px);
+  padding-block: var(--space-7);
+  /* 與 hero-device.webp 圖裡烘進去的漸層完全相同（實測取樣：0～60% 為 #e5eaf5，
+     100% 為 #d9e0ee）。因為是純垂直漸層，圖片只要拉成與 hero 等高，
+     兩者的漸層停點就必然對齊，任何視窗寬度都不會出現接縫。 */
+  background: linear-gradient(180deg, #e5eaf5 0%, #e5eaf5 60%, #d9e0ee 100%);
+}
+
+.sl-hero__media {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(58%, 1064px);
+  background-image: url('../../images/solutions/hero-device.webp');
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: auto 100%;
+  /* 左緣淡入：圖是硬邊矩形，直接貼上去會看到一條直線。用遮罩讓它淡出，
+     露出的就是 section 自己的漸層，顏色必然吻合（不必再調一次漸層）。
+     -webkit- 前綴是給 2021 年的 Chrome/Safari；不支援遮罩的瀏覽器只會看到硬邊，
+     不影響內容可讀性。 */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+}
+
+.sl-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+}
+
+.sl-hero__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 3.125rem); /* 28px → 50px */
+  line-height: 1.4;
+  color: var(--text-heading);
+}
+
+.sl-hero__desc {
+  margin-top: var(--space-3);
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: clamp(0.9375rem, 0.88rem + 0.35vw, 1.125rem); /* 15px → 18px */
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+.sl-hero__cta {
+  margin-top: var(--space-5);
+  box-shadow: 0 16px 16px rgba(17, 24, 39, 0.2);
+}
+
+/* icon-arrow-c.svg 是藍色描邊，放在藍底按鈕上會看不見，轉成白色 */
+.sl-hero__cta .btn-icon {
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 1024px) {
+  .sl-hero__media {
+    width: 52%;
+    opacity: 0.55; /* 文字會壓到圖上，降低對比干擾 */
+  }
+
+  .sl-hero__inner {
+    max-width: 62%;
+  }
+}
+
+@media (max-width: 640px) {
+  .sl-hero {
+    padding-block: var(--space-6);
+  }
+
+  /* 手機版圖片改放到文字下方（用背景圖無法重排，改成壓在底部當裝飾） */
+  .sl-hero__media {
+    width: 100%;
+    opacity: 0.35;
+    background-position: right bottom;
+    background-size: auto 70%;
+  }
+
+  .sl-hero__inner {
+    max-width: none;
+  }
+
+  .sl-hero__title br {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   2. 六大場景（白底 TAB 切換）
+   ========================================================================== */
+.sl-scenarios {
+  background: var(--white);
+}
+
+.sl-tabs {
+  margin-bottom: var(--space-6);
+}
+
+/* ---- 場景圖 ---- */
+.sl-scene__media {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.sl-scene__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* TODO: 社區／住家／金融的場景照尚未提供，用可辨識的佔位塊而不是拿別的場景照充數 */
+.sl-scene__media--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1440 / 640;
+  background: var(--surface-soft);
+  border: 1px dashed var(--line);
+  color: var(--text-muted);
+  font-family: var(--font-tc);
+  font-size: clamp(0.875rem, 0.8rem + 0.4vw, 1.125rem);
+}
+
+/* ---- 標題組與兩欄內容 ---- */
+.sl-scene__body {
+  margin-top: var(--space-6);
+}
+
+.sl-scene__head {
+  margin-bottom: var(--space-5);
+}
+
+.sl-scene__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.sl-scene__benefits-title {
+  margin-bottom: var(--space-3);
+  font-family: var(--font-tc);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.sl-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sl-benefits__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-family: var(--font-tc);
+  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  line-height: 1.7;
+  color: var(--text-body);
+}
+
+.sl-benefits__item img {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+}
+
+/* ---- 場景內的 FAQ ---- */
+.sl-scene__faq {
+  margin-top: var(--space-8);
+  padding-top: var(--space-7);
+  border-top: 1px solid var(--line);
+}
+
+.sl-scene__faq-head {
+  margin-bottom: var(--space-5);
+}
+
+.sl-scene__faq-footer {
+  margin-top: var(--space-5);
+  text-align: center;
+}
+
+/* .faq__list 是 display:flex，會蓋過 [hidden] 的 display:none，
+   所以「查看更多」還沒點就會整批露出來。這裡明確把它擋回去。 */
+.sl-scene__faq-more[hidden] {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sl-scene__cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+@media (max-width: 640px) {
+  .sl-scene__body {
+    margin-top: var(--space-5);
+  }
+
+  .sl-scene__faq {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+  }
+}
+
+/* ==========================================================================
+   共用表格樣式（場景的產品配置表 + 比較表）
+   ========================================================================== */
+.sl-scene__table-wrap,
+.sl-compare__wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.sl-scene__table-wrap:focus-visible,
+.sl-compare__wrap:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.sl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-tc);
+  text-align: left;
+}
+
+.sl-table thead th {
+  background: var(--line);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-dark);
+  padding: 12px var(--space-4);
+  white-space: nowrap;
+}
+
+.sl-table tbody th,
+.sl-table tbody td {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line);
+  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  line-height: 1.6;
+  vertical-align: top;
+}
+
+.sl-table tbody th {
+  font-weight: 700;
+  color: var(--text-heading);
+  white-space: nowrap;
+}
+
+.sl-table tbody td {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* 場景的產品配置表：兩欄 */
+.sl-scene__table-wrap .sl-table {
+  min-width: 480px;
+}
+
+/* 比較表：四欄，最後一欄是重點結論 */
+.sl-table--compare {
+  min-width: 900px;
+}
+
+.sl-table__highlight {
+  font-weight: 700;
+  color: var(--text-heading) !important;
+}
+
+/* ==========================================================================
+   3. 四大核心服務
+   ========================================================================== */
+/* 原稿是整塊滿版背景照，但那是建立在「區塊高度 = 圖片高度」的前提上。
+   本頁中文換行後區塊比原稿高，直接用 cover／auto 100% 都會把圖放大、
+   3D 主體被推到左邊蓋住文字；用 contain 又會在上下留下看得見的色帶邊界。
+   改成右側的裝飾層：維持圖片比例、限制寬度，再用橢圓遮罩讓四周柔化融入白底。
+   不支援遮罩的瀏覽器只會看到一塊矩形圖，不影響文字可讀性。 */
+.sl-core {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--white);
+}
+
+.sl-core::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(64%, 1000px);
+  aspect-ratio: 1920 / 677;
+  pointer-events: none;
+  background: url('../../images/solutions/core-bg.webp') center / cover no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse at 68% 50%, #000 42%, transparent 76%);
+  mask-image: radial-gradient(ellipse at 68% 50%, #000 42%, transparent 76%);
+}
+
+.sl-core .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* 內容只佔左半，右半留給背景照（與 Figma 的 880px 內容欄同意） */
+.sl-core__inner {
+  max-width: 62%;
+}
+
+.sl-core__head {
+  margin-bottom: var(--space-6);
+}
+
+.sl-core__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-5);
+}
+
+.sl-core__card {
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--color-primary);
+}
+
+.sl-core__card-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem); /* 18px → 24px */
+  line-height: 1.4;
+  color: var(--color-primary);
+}
+
+.sl-core__num {
+  font-family: var(--font-en);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.375rem, 1.2rem + 0.7vw, 1.875rem); /* 22px → 30px */
+  letter-spacing: 0.02em;
+}
+
+.sl-core__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-left: var(--space-4);
+  list-style: disc;
+  font-family: var(--font-tc);
+  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+@media (max-width: 1024px) {
+  /* 照片在 .sl-core::after，背景屬性要下在那裡（.sl-core 本身沒有 background-image）。
+     窄螢幕讓裝飾照淡一點、往下靠，避免壓到文字。 */
+  .sl-core::after {
+    width: 78%;
+    opacity: 0.6;
+    top: auto;
+    bottom: 0;
+    transform: none;
+  }
+
+  .sl-core__inner {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .sl-core__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+/* ==========================================================================
+   4. 比較表區塊
+   ========================================================================== */
+.sl-compare {
+  background: var(--surface-soft);
+  overflow: hidden;
+  /* 預留插畫高度：680px 寬 × (451/634) ≈ 484px ＋ 與表格的留白。
+     高度由 CSS 固定預留，不等圖載入才撐開，避免 layout shift */
+  padding-bottom: 548px;
+}
+
+/* isometric 插畫：貼齊區塊右下角邊緣（絕對定位，不受 container padding 限制） */
+.sl-compare__figure {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 680px;
+}
+
+.sl-compare__figure img {
+  display: block; /* 消除 inline baseline 縫隙，下緣才會真正貼齊 */
+  position: relative; /* 建立定位讓 z-index 生效，插畫壓在色塊上層 */
+  z-index: 1;
+  width: 100%;
+  height: auto;
+}
+
+/* 插畫後方的淡藍色塊（純靜態裝飾）：與插畫在 Figma 中共用右下對齊、
+   同一縮放比例（919/634 ≈ 145%），往左上延伸；超出 section 的部分
+   由 .sl-compare 的 overflow:hidden 裁掉（設計稿中色塊本就延伸出界） */
+.sl-compare__figure .sl-compare__figure-bg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 145%;
+  max-width: none; /* 解除 base.css 的 img max-width:100%，色塊才放得比插畫寬 */
+}
+
+@media (max-width: 640px) {
+  .sl-compare {
+    /* 插畫滿寬時高度 ≈ 71.2vw，另加留白 */
+    padding-bottom: calc(72vw + var(--space-5));
+  }
+
+  .sl-compare__figure {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   5. 24 小時服務 + 為什麼選新光保全
+   ========================================================================== */
+.sl-support__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.sl-support__desc {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.sl-cards {
+  display: flex;
+  flex-direction: column;
+}
+
+.sl-cards__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.sl-cards__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+}
+
+.sl-cards__icon img {
+  width: 26px;
+  height: 26px;
+}
+
+.sl-cards__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sl-cards__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(0.9375rem, 0.9rem + 0.3vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--text-dark);
+}
+
+.sl-cards__desc {
+  font-family: var(--font-tc);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.sl-why__lead {
+  margin-top: var(--space-3);
+  font-family: var(--font-tc);
+  font-weight: 600;
+  font-size: clamp(1rem, 0.95rem + 0.35vw, 1.25rem);
+  line-height: 1.8;
+  color: var(--text-heading);
+}
+
+.sl-why__body {
+  margin-top: var(--space-2);
+  font-family: var(--font-tc);
+  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+.sl-why__points {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.sl-why__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-family: var(--font-tc);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-body);
+}
+
+.sl-why__points img {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+}
+
+@media (max-width: 1024px) {
+  .sl-support__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
+  .sl-why__points {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+}
+
+/* ==========================================================================
+   6. 五步驟跑馬燈
+   「線走到哪、字亮到哪、無限循環」，整塊是一張 inline SVG：
+   viewBox + width:100% 讓它在任何斷點都等比縮放，不會被拆開或重排。
+   做法：藍色進度線用 stroke-dasharray/dashoffset 畫線，由
+   assets/js/solutions/steps-marquee.js 的 rAF 線性推進；線頭每經過一顆圓，
+   該步驟群組（.sl-steps__step）被加上 is-active，整欄顏色（圓圈、STEP 標籤、
+   標題、說明）用 0.45s transition 淡入。
+   配色（#1d5ef9 等）為本區塊局部指定，刻意不進全站 token。
+   ========================================================================== */
+.sl-steps {
+  margin-top: var(--space-6);
+}
+
+.sl-steps__title {
+  margin-bottom: var(--space-3);
+  font-family: var(--font-tc);
+  font-weight: 600;
+  font-size: clamp(1rem, 0.95rem + 0.35vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--text-heading);
+}
+
+.sl-steps__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 兩層共用的文字樣式（顏色由各層覆寫） */
+.sl-steps__svg text {
+  font-family: var(--font-tc);
+}
+
+.sl-steps__label {
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.sl-steps__name {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.sl-steps__note {
+  font-weight: 400;
+  font-size: 15px;
+}
+
+/* 底線（灰）與藍色進度線。進度線的 dasharray/dashoffset 初始值寫在 SVG
+   屬性上（整條隱藏），動畫時由 steps-marquee.js 改 dashoffset 畫出來。 */
+.sl-steps__line-base {
+  stroke: #dce1e4;
+  stroke-width: 3;
+}
+
+.sl-steps__line {
+  stroke: #1d5ef9;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+/* 每一步整欄：未亮（灰）→ is-active（彩色），0.45s 淡入 */
+.sl-steps__step circle {
+  fill: #fff;
+  stroke: #e5e7eb;
+  stroke-width: 3;
+  transition:
+    stroke 0.45s ease,
+    stroke-width 0.45s ease;
+}
+
+.sl-steps__step text {
+  transition: fill 0.45s ease;
+}
+
+.sl-steps__step .sl-steps__label,
+.sl-steps__step .sl-steps__name {
+  fill: #9ca3af;
+}
+
+.sl-steps__step .sl-steps__note {
+  fill: #c4cad1;
+}
+
+.sl-steps__step.is-active circle {
+  stroke: #1d5ef9;
+  stroke-width: 5;
+}
+
+.sl-steps__step.is-active .sl-steps__label {
+  fill: #1d5ef9;
+}
+
+.sl-steps__step.is-active .sl-steps__name {
+  fill: #111827;
+}
+
+.sl-steps__step.is-active .sl-steps__note {
+  fill: #4b5563;
+}
+
+@media (max-width: 640px) {
+  /* 需求：這塊不能拆切，只能整段等比縮小。所以窄螢幕不改排版，
+     只把可視寬度交給 viewBox 自己等比縮，不做任何欄位重排。 */
+  .sl-steps {
+    margin-top: var(--space-5);
+  }
+}
+
+/* prefers-reduced-motion 由 steps-marquee.js 用 matchMedia 判斷：
+   不啟動輪播、直接讓 STEP 01 亮起（見該檔），CSS 這邊不需要定格規則。 */

@@ -1,0 +1,148 @@
+/* ==========================================================================
+   faq.css — FAQ 手風琴（共用元件）
+   原本寫在 pages/home.css，因產品介紹頁也用同一組結構，抽成共用元件避免兩份維護。
+   底層是原生 <details>/<summary>，展開動畫與 ＋/－ 圖示切換由
+   assets/js/common/faq-accordion.js 負責。
+   ========================================================================== */
+.faq__list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.faq__item {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq__item > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+}
+
+.faq__item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__question {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.faq__toggle {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--color-primary);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.faq__item[open] .faq__toggle {
+  background: none;
+  color: var(--color-primary);
+}
+
+.faq__answer-wrap {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+.faq__item[open] .faq__answer-wrap {
+  /* JS 會依內容實際高度覆寫 max-height，這裡先給預設可視上限 */
+  max-height: 400px;
+}
+
+.faq__answer {
+  padding-bottom: var(--space-5);
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-regular);
+}
+
+.faq__footer {
+  margin-top: var(--space-6);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .faq__question {
+    font-size: 16px;
+  }
+}
+
+/* ==========================================================================
+   .faq--page —— 內頁版 FAQ（解決方案頁、FAQ 頁）
+   兩頁的 Figma 稿用的是新版 FAQ_item 元件（117:4266），與首頁／產品頁那版
+   有 7 處不同。這裡只做覆寫，上面的規則完全不動，所以首頁與產品頁的外觀不受影響。
+   ========================================================================== */
+.faq__list.faq--page {
+  border-top: 0; /* 設計稿沒有上緣線，第一題直接開始 */
+}
+
+.faq--page .faq__item > summary {
+  padding-block: var(--space-2); /* 32px → 8px，題目列更緊湊（題數多） */
+  gap: var(--space-5);
+}
+
+.faq--page .faq__question {
+  font-weight: 500;
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.25rem); /* 16px → 20px */
+  line-height: 1.45;
+  color: var(--text-heading);
+}
+
+/* 內頁版的 ＋／－ 是純文字，沒有圓形底與邊框 */
+.faq--page .faq__toggle {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 22px;
+  line-height: 32px;
+  color: var(--color-primary);
+}
+
+.faq--page .faq__item[open] .faq__toggle {
+  background: none;
+  color: var(--color-primary);
+}
+
+.faq--page .faq__answer {
+  padding-block: 12px;
+  /* 設計稿右側是寫死的 240px 留白（1200 內容寬的 20%），改成比例值，
+     否則窄螢幕會把答案擠成一條。1024px 以下取消。 */
+  max-width: 80%;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+/* 題目較長時的無 JS fallback（有 JS 時會被 inline max-height 覆寫成實際高度） */
+.faq--page .faq__item[open] .faq__answer-wrap {
+  max-height: 800px;
+}
+
+@media (max-width: 1024px) {
+  .faq--page .faq__answer {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .faq--page .faq__item > summary {
+    gap: var(--space-3);
+  }
+}

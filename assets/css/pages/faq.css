@@ -1,0 +1,80 @@
+/* ==========================================================================
+   faq.css — FAQ 頁專屬樣式
+   共用層請改 tokens.css / base.css / components/*.css，本檔只寫本頁區塊。
+
+   對稿說明：Figma 稿寬 1920，標題與頁籤的內容寬 1440、問答清單 1200。
+   本專案 .container 是 1200，三者統一用 1200（設計稿那 240px 落差沒有標註理由）。
+   ========================================================================== */
+
+/* ---- 標題區 ----
+   Figma 的頂部裝飾是「漸層 + 2 張照片 + 白色淡出遮罩」四層疊出來的，
+   淡出邊界都在圖裡，所以整組匯出成一張 1920×739 的圖直接當背景用，
+   下緣本來就已經淡出到白色，接到頁面白底不會有接縫。 */
+.fq-head {
+  position: relative;
+  background-color: var(--white);
+  background-image: url('../../images/faq/hero-bg.webp');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% auto;
+  padding-top: var(--space-8);
+}
+
+/* 置中與 eyebrow 間距來自 base.css 的 .section-head，這裡只加大與頁籤的距離 */
+.fq-head__intro {
+  margin-bottom: var(--space-6);
+}
+
+.fq-head__desc {
+  margin-top: var(--space-3);
+  font-family: var(--font-tc);
+  font-weight: 400;
+  font-size: clamp(0.95rem, 0.88rem + 0.4vw, 1.25rem); /* 15px → 20px */
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+/* 設計稿這句沒做成連結，但每頁都要有預約諮詢入口，所以補成錨點 */
+.fq-head__link {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fq-head__link:hover {
+  color: var(--color-primary-dark);
+}
+
+.fq-tabs {
+  margin-bottom: var(--space-6);
+}
+
+/* ---- 問答清單 ----
+   .faq__list.faq--page 的外觀在 components/faq.css，這裡只給版面位置。
+   高度不設限：題目展開時頁面高度本來就會跟著變高（需求要求的行為）。 */
+.fq-panel {
+  min-height: 200px;
+}
+
+@media (max-width: 1024px) {
+  .fq-head {
+    /* 背景圖在窄螢幕會被壓得很扁，改成維持比例、超出的部分裁掉 */
+    background-size: auto 420px;
+  }
+}
+
+@media (max-width: 640px) {
+  .fq-head {
+    padding-top: var(--space-6);
+    background-size: auto 280px;
+  }
+
+  .fq-head__desc br {
+    display: none;
+  }
+
+  .fq-tabs {
+    margin-bottom: var(--space-5);
+  }
+}

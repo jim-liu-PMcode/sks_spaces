@@ -1,0 +1,110 @@
+/* ==========================================================================
+   tabs.css — 共用頁籤元件（產品介紹／解決方案／FAQ 三頁共用）
+   按鈕由 assets/js/common/tabs.js 產生，這裡只寫外觀。
+
+   兩種外觀是依各頁 Figma 稿走的，不是隨意分岔：
+     .tabs--pill  產品介紹頁 145:271、解決方案頁 145:988 —— 膠囊、未選中 #f8f9fa
+     .tabs--card  FAQ 頁 147:2674 —— 12px 圓角、未選中白底、選中有陰影且字重較粗
+   ========================================================================== */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  /* 設計稿的 row-gap 是 0，換行時兩列會黏在一起（窄螢幕沒被設計過），這裡補上 */
+  gap: var(--space-3);
+}
+
+.tabs__tab {
+  -webkit-appearance: none; /* 無前綴的 appearance 要 Safari 15.4 才支援，超出本專案 baseline 2021 */
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-tc);
+  line-height: 1.6;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tabs__tab img {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* 選中態的 icon 要跟著文字變白 */
+.tabs__tab.is-active img {
+  filter: brightness(0) invert(1);
+}
+
+/* ---- pill：產品介紹頁、解決方案頁 ---- */
+.tabs--pill .tabs__tab {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text-body);
+  font-weight: 500;
+  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem); /* 15px → 17px */
+  padding: 12px 24px;
+}
+
+.tabs--pill .tabs__tab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.tabs--pill .tabs__tab.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--white);
+}
+
+/* ---- card：FAQ 頁 ---- */
+.tabs--card .tabs__tab {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--text-regular);
+  font-weight: 500;
+  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem); /* 15px → 17px */
+  padding: 12px 32px;
+}
+
+.tabs--card .tabs__tab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.tabs--card .tabs__tab.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--white);
+  font-weight: 600;
+  box-shadow: 0 16px 16px rgba(17, 24, 39, 0.2);
+}
+
+@media (max-width: 640px) {
+  .tabs {
+    gap: var(--space-2);
+  }
+
+  .tabs--pill .tabs__tab {
+    padding: 10px 18px;
+  }
+
+  .tabs--card .tabs__tab {
+    padding: 10px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabs__tab {
+    transition: none;
+  }
+}

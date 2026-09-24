@@ -1,0 +1,2295 @@
+/* ==========================================================================
+   home.css — 首頁專屬樣式
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Hero
+   ========================================================================== */
+/* 稿上 hero（Figma 51:69）是 1920×1327，且「stats 以上含 header」正好等於 1327
+   ——header 是 fixed 疊在上面，所以 hero 從 y=0 起算，數字對得上。
+   刻意不設 overflow：稿上 hero 不裁切，電腦 mockup 底部（y=1366）會溢出 39px
+   壓在 stats 上（那段是淡出的落地陰影，最大 alpha 110）。裁切改掛 .hero__bg，
+   只裁背景，不裁裝置。 */
+.hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1920 / 1327;
+  min-height: 560px;
+  background: #04102e;
+}
+
+/* header 透明↔白底的偵測點（見 js/home/header-scroll.js）。
+   絕對定位不佔流；高度 8px 即為切換門檻——留一點緩衝，
+   iOS rubber-band 往上拉時不會在 0 附近來回抖動。 */
+.hero__scroll-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 8px;
+  pointer-events: none;
+}
+
+/* 背景層。81.39% = 1080/1327，即稿上影片 frame 的下緣。
+   自身的 linear-gradient 只是保底（影片載入前／失敗時）：影片區深藍、下方純白。
+   稿上 hero 本身無填色，那 109px 白是頁面 frame 的白底，這裡直接畫出來。 */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    #04102e 0,
+    #04102e 81.39%,
+    var(--white) 81.39%,
+    var(--white) 100%
+  );
+}
+
+/* 影片只佔稿上 VIDEO#sks-hero-video（51:70）那 1080px＝hero 高的 81.39%。
+   下方 247px 由漸層帶（138px）與純白（109px）接手。
+   影片下緣不會有硬邊——漸層帶在 y≈1100 前 alpha 已達 1.0，早就蓋住了。 */
+.hero__bg video {
+  display: block;
+  width: 100%;
+  height: 81.39%;
+  object-fit: cover;
+}
+
+/* Figma 51:72 的藍色漸層光帶。稿上是 rotate(90°) 的半透明 PNG＋blur(20px)，
+   水平置中 2048 寬（實際涵蓋整個 1920），垂直 y=-2 → 1218。
+   這裡用等值的 linear-gradient 取代：線性漸層本身已經平滑，不需要 blur。
+   色階由 lexi 從 Figma 取得，方向是垂直（Figma 標示的 90deg 對應 CSS 的 to bottom）。
+
+   前 50% 完全透明，所以影片上半部不受影響；alpha 從 hero 的 y≈610 開始爬升，
+   到 y≈1100 已完全不透明——這正是影片下緣（y=1080）不會出現硬邊的原因。
+
+   註：稿上沒有任何壓暗層。原本這裡有一層 rgba(0,10,40,.35→.15→.55) 是為了白字
+   對比自行加的，但實測影片頂端本身就是 #00041e、白色標題對比 17:1，不需要；
+   而且它會把漸層帶的藍色壓濁，故整層移除。 */
+.hero__bg-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.15%; /* -2 / 1327 */
+  height: 91.94%; /* 1220 / 1327，底部落在 91.79% = 1218/1327 */
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(23, 71, 225, 0) 50%,
+    rgba(32, 92, 233, 0.6) 60%,
+    rgba(42, 106, 255, 0.8) 77.5%,
+    #4f95ff 87.5%,
+    #ffffff 100%
+  );
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  padding-top: calc(var(--header-height) + 6.5vw);
+  padding-inline: var(--space-4);
+}
+
+.hero__content-inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.hero__title {
+  font-family: var(--font-en);
+  font-weight: 800;
+  font-size: clamp(2.25rem, 1rem + 4vw, 6rem);
+  line-height: 1.05;
+  color: var(--white);
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+.hero__subtitle {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 0.9rem + 2.2vw, 3rem);
+  color: var(--white);
+  margin-top: var(--space-4);
+}
+
+/* 打字機游標（由 type-text.js 注入；reduced-motion 使用者不會產生此元素） */
+.typewriter-cursor {
+  display: inline-block;
+  width: 0.08em;
+  height: 1em;
+  margin-left: 0.12em;
+  background: currentColor;
+  vertical-align: -0.1em;
+  animation: typewriter-blink 1s steps(1, end) infinite;
+}
+
+@keyframes typewriter-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 電腦／手機 mockup 疊層。
+   外接框 .hero__devices ＝原 Figma 構圖在 hero 裡的外接矩形：
+     水平 16.3% → 80.315%（= 19.69% + 60.625%）＝ 64.015% 寬
+     垂直 44.4% → 103%（= 44.4% + 58.6%）      ＝ 58.6% 高
+   hero 高 = 0.69115 × 寬，故框比例 = 0.64015 ÷ (0.586 × 0.69115) = 1.5806。
+
+   關鍵：框用「寬度 + aspect-ratio」驅動，不再依賴 .hero 的 aspect-ratio。
+   原本裝置的高度取自 hero 高的 %，一旦 min-height 接管（W < 810.3px）寬高就脫鉤，
+   375px 時比例誤差達 −60%（電腦被壓成接近正方形、手機變成細長片）。改成外接框之後
+   不論 hero 多高，裝置都只依框寬決定，比例恆定。 */
+.hero__devices {
+  position: absolute;
+  left: 16.3%;
+  aspect-ratio: 1.5806;
+  z-index: 1;
+  pointer-events: none;
+  /* 桌機基準值是 top: 44.4% / width: 64.015%（＝上面推導的外接框）。
+     811–1440px 之間 hero 高度隨寬度等比縮，但文字區縮得慢很多（clamp 有下限、
+     還會換行），視窗越窄文字佔比越大，副標就會壓到電腦 mockup 的白色瀏覽器列
+     ——實測臨界 1317px，原本 max-width:1024px 的斷點設得太低，
+     1025–1320 這段是既有 bug。
+
+     對策：框往下挪讓出文字，同時等比縮小補償——只下移的話框底部會超出 hero 更多
+     （原本就在 103%、被 overflow:hidden 裁掉），電腦下緣會被切掉一大塊。
+
+     用連續公式而非階梯斷點：實測「需要下移的 px」與 (1460 − 視窗寬) 的比值
+     在 811–1440 整段都很線性，一條 calc 就能涵蓋，斷點邊界也不會跳動。
+     width 的係數是回推出來的：讓「底部超出 hero」在整段維持在桌機原本的 ~3.3%，
+     不然只下移會讓框底部越裁越多（hero 有 overflow:hidden，而 .stats 緊接在下面，
+     看起來就像被 .stats 蓋住）。
+     max()/min() 把公式夾在桌機原值以內：≥1440px 時回到 44.4% / 64.015% / left 16.3%，
+     桌機構圖與改動前完全一致（夾住點必須是 1440 不是 1460，否則 1440–1459 會下沉）。 */
+  --dev-w: min(64.015%, calc(85.8vw - 313.8px));
+  width: var(--dev-w);
+  top: calc(44.4% + max(0px, (1440px - 100vw) * 0.14));
+  /* left 必須跟著 width 一起收，否則框變窄、左緣不動，右邊空隙會越開越大
+     （實測 811px 時左 16.3% / 右 34.5%，明顯偏左）。
+     0.453 = 16.3 ÷ (16.3 + 19.685)，即桌機原構圖的左右留白比，
+     縮小時等比維持同一個水平關係。 */
+  left: calc((100% - var(--dev-w)) * 0.453);
+}
+
+/* 以下百分比相對 .hero__devices，換算自原本相對 hero 的值，構圖與改動前完全一致
+   （驗算：電腦 1.4967 / 手機 0.4943，對原生 1.498 / 0.494 誤差 < 0.1%） */
+.hero__device {
+  position: absolute;
+}
+
+.hero__device--computer {
+  left: 5.296%;
+  top: 0;
+  width: 94.7%;
+  height: 100%;
+}
+
+.hero__device--phone {
+  left: 0;
+  top: 39.93%;
+  width: 17.17%;
+  height: 54.91%;
+}
+
+/* 裝置 mockup 底圖：常駐顯示（不參與淡入），撐滿容器（容器＝Figma mockup rect）。
+   object-fit 是安全網——外接框比例若被誤改，PNG 也不會被拉伸變形。 */
+.hero__device-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hero__device video {
+  position: absolute;
+  object-fit: cover;
+  /* 與背景影片同一套防閃機制（video-fade.js）：metadata 解出首幀時
+     影片會整塊瞬間出現（pop-in），先隱藏、ready 後淡入 */
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* 影片貼合各 mockup 螢幕區：百分比換算自 Figma 兄弟節點座標
+   （電腦 mockup 51:73 @378,589 1164×777、螢幕 59:1960 @393,680 1134×562；
+     手機 mockup 51:74 211×427、螢幕 59:1955 187×412 圓角 24px） */
+.hero__device--computer video {
+  left: 1.29%;
+  top: 11.71%;
+  width: 97.42%;
+  height: 72.33%;
+}
+
+.hero__device--phone video {
+  left: 5.69%;
+  top: 1.64%;
+  width: 88.63%;
+  height: 96.49%;
+  /* Figma 59:1955 cornerRadius 24px：換算為影片自身寬高百分比（24/187、24/412）
+     讓圓角隨容器等比縮放 */
+  border-radius: 12.83% / 5.83%;
+}
+
+.hero__device.is-ready video {
+  opacity: 1;
+}
+
+/* 811px 以上的疊層版：位置與大小隨視窗連續調整。
+   hero 高度隨寬度等比縮（∝ W），但文字區縮得慢很多（clamp 有下限、還會換行），
+   視窗越窄文字佔比越大，副標就會壓到電腦 mockup 的白色瀏覽器列
+   （實測臨界 1317px——原本 max-width:1024px 的斷點設得太低，1025–1320 這段是既有 bug）。
+
+   對策：外接框往下挪讓出文字，同時等比縮小補償——只下移的話框底部會超出 hero 更多
+   （原本就在 103%、被 overflow:hidden 裁掉），電腦下緣會被切掉一大塊。
+
+   用連續公式而不是階梯斷點：實測「需要下移的 px」與 (1460 − 視窗寬) 的比值
+   在 811–1440 整段都穩定落在 0.135，所以一條 calc 就能涵蓋，
+   也不會在斷點邊界出現跳動。max()/min() 把公式夾在桌機原值以內：
+   ≥1440 時 top 回到 44.4%、width 回到 64.015%，桌機構圖完全不變。 */
+/* ≤810px：改為一般排版。
+   810.3px = 560 ÷ (1327/1920)，是 min-height 開始接管 aspect-ratio 的精確臨界點；
+   再窄下去疊層版的可用垂直空間會不足（文字與裝置必然互相擠壓）。
+   這裡讓 hero 由內容撐高、外接框脫離絕對定位接在文字下方，
+   從此不可能重疊、也不可能被 hero 裁切。 */
+@media (max-width: 810px) {
+  .hero {
+    aspect-ratio: auto;
+    min-height: 560px;
+  }
+
+  /* 影片／漸層帶的分層只在桌機成立：那些百分比是 1080/1327、1220/1327 換算的，
+     前提是 hero 有固定 aspect-ratio。這裡 hero 高度改由內容撐開，同一組百分比
+     會隨文字長度亂跑，分界線會浮動。稿上也只有 1920 桌機版，沒有小螢幕依據，
+     所以回到「影片鋪滿、不畫漸層帶」的單純作法。 */
+  .hero__bg {
+    background: #04102e;
+  }
+
+  .hero__bg video {
+    height: 100%;
+  }
+
+  .hero__bg-band {
+    display: none;
+  }
+
+  /* 用 relative 而非 static：一樣回到正常流接在文字下方，但必須保住「定位參考點」
+     的身分——裡面的 .hero__device 是 absolute，wrapper 若變成 static，
+     它們會跳過 wrapper 去對 .hero 定位（.hero 是 relative），構圖立刻崩掉。 */
+  .hero__devices {
+    position: relative;
+    top: auto;
+    left: auto;
+    /* 扣掉左右各一個 --space-4（24px）——與 .container 及 .hero__content 的
+       padding-inline 同一條側邊線，裝置才會跟文字切齊。
+       不扣的話 <560px 時 wrapper 就是 100%，而框的左右緣正好是手機左緣與
+       電腦右緣，兩個裝置會直接貼死視窗兩側。 */
+    width: min(100% - var(--space-4) * 2, 560px);
+    /* 只留上方間距。下方刻意不留白——桌機構圖本來就讓螢幕腳座出血裁掉（~3%），
+       手機版跟著貼齊 hero 下緣，維持同一套語彙。 */
+    margin: var(--space-6) auto 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 640px;
+  }
+
+  .hero__content {
+    padding-top: calc(var(--header-height) + var(--space-6));
+  }
+}
+
+/* ==========================================================================
+   2. 數字統計條
+   ========================================================================== */
+/* 稿上每一欄本身就是 240px 高（分隔線與高亮底通到整條上下緣），
+   所以上下留白掛在 .stat 而不是 .stats。窄螢幕改回掛在 section 上，
+   否則多列時每列都各帶 64px 上下內距，整條會比現在高將近 100px。 */
+.stats {
+  padding-block: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* 沿用 .resilience > .container / .process > .container 的前例：
+   Figma 51:87 是全出血、左右各內縮 160px、內容寬 1600；本站統一縮到 1440。 */
+.stats > .container {
+  max-width: 1440px;
+  /* 稿上內容框沒有左右內距，四欄直接等分；沿用 .contact-section > .container
+     的寫法把 .container 預設的 24px 內距換成外側留白，
+     這樣 ≥1488px 時每欄剛好 1440/4 = 360px，比例才對得上稿子。 */
+  width: calc(100% - 48px);
+  padding-inline: 0;
+}
+
+/* 稿上四欄緊貼（gap 0），靠分隔線區隔，不是靠欄距 */
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 0;
+  row-gap: var(--space-6);
+  text-align: center;
+}
+
+.stat {
+  /* 稿上每欄 399.5px 內無左右內距；本站欄寬較窄，補一點避免文字貼到分隔線 */
+  padding-block: var(--space-7);
+  padding-inline: var(--space-2);
+  transition: box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+/* Figma 的分隔線只在 col1|col2 與 col3|col4，col2|col3 中間留白
+   （稿上第 2 欄是高亮態，左右刻意不畫）。
+   畫成第 2、4 欄的 border-left 而非第 1、3 欄的 border-right：
+   hover 時要隱藏「該欄左右相鄰」的線，border-left 版只需要 .stat:hover
+   與 .stat:hover + .stat 兩個選擇器；border-right 版得用「前一個兄弟」，
+   只能靠 :has()，而 :has() 是 2022–2023 才普及，不符本站 2021 baseline。 */
+.stat:nth-child(2),
+.stat:nth-child(4) {
+  border-left: 1px solid var(--line);
+}
+
+/* Figma 51:92：白底 + drop-shadow(0 -12px 40px rgba(0,0,0,.08))，光暈朝上。
+   稿上靜態畫在第 2 欄，這裡實作成 hover——「為何是第 2 欄」沒有語意理由。
+   統計條不可點擊，所以不加 cursor: pointer，避免讓人以為點得下去。 */
+.stat:hover {
+  background: var(--white);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.stat:hover,
+.stat:hover + .stat {
+  border-left-color: transparent;
+}
+
+/* Figma 51:87 對稿。數字節點（51:90 / 94 / 100 / 106）皆為
+   Plus Jakarta Sans Light 64px / letter-spacing -1.28px / #2563eb。
+   原本的 2vw 係數要到 2080px 才碰得到 4rem 上限，1920 只有 60.8px。
+   改用 flex row + align-items:center，對應稿上「數字框 81px 與單位框 31px
+   垂直置中」的關係（不是 baseline 對齊），比 vertical-align 硬湊準確。 */
+.stat__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-en);
+  font-weight: 300;
+  font-size: clamp(2rem, 1.4rem + 2.167vw, 4rem);
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+  line-height: 1.27;
+  white-space: nowrap;
+}
+
+/* 單位「小時／天／網」是獨立文字節點（51:95 / 101 / 107），與數字不同字族與色。
+   注意第一欄的 `k+` 不走這條 —— 稿上它與「100」在同一個 text node、
+   完全同樣式，所以 HTML 裡就寫成 .stat__number 的純文字，直接繼承。 */
+.stat__number-suffix {
+  font-family: var(--font-tc);
+  margin-left: 4px;
+  color: var(--text-regular);
+  /* 稿值 21px、行高 31px，但寫成相對數字的 em/倍數，
+     這樣窄螢幕數字縮到 32px 時單位才會跟著縮，比例不會走樣 */
+  font-size: 0.328125em;
+  font-weight: 500;
+  line-height: 1.476;
+}
+
+/* 稿上只有「小時」是 17px（51:95），天與網是 21px；
+   行高同樣維持稿上的 31px（17 × 1.824） */
+.stat__number-suffix--sm {
+  font-size: 0.265625em;
+  line-height: 1.824;
+}
+
+/* Figma 51:91 等四個標籤：Noto Sans TC SemiBold 16px / lh 24px / #111827，
+   與數字的間距 8px（原本是 15px / 一般字重 / 灰色 / 間距 16px）。 */
+.stat__label {
+  margin-top: var(--space-2);
+  font-family: var(--font-tc);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-dark);
+}
+
+/* 2 欄狀態下，第 2、4 欄的 border-left 剛好落在每一列中間，維持不動 */
+@media (max-width: 1024px) {
+  .stats {
+    padding-block: var(--space-7);
+  }
+
+  .stat {
+    padding-block: 0;
+  }
+
+  .stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats__grid {
+    row-gap: var(--space-5);
+  }
+
+  /* 每欄只剩約 187px，內距加大避免數字加單位後撞到分隔線 */
+  .stat {
+    padding-inline: var(--space-3);
+  }
+}
+
+/* ==========================================================================
+   3. 影片 / 介紹區塊
+   ========================================================================== */
+/* Figma 51:110 對稿：整區改淺色底——白底＋下緣波紋攝影圖＋兩層白漸層，
+   可視範圍近純白、下緣隱約波紋 */
+.intro {
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+  color: var(--text-dark);
+}
+
+.intro__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--white);
+}
+
+/* 波紋攝影圖（Figma 51:156）：貼齊區塊下緣、佔高 50%，
+   cover＋錨定圖片頂部＝露出照片頂部平滑帶（與稿一致，波紋主體落在摺線下） */
+.intro__bg::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
+  background: url("../../images/home/intro-light-bg.webp") center top / cover
+    no-repeat;
+}
+
+/* 兩層 180deg 白漸層（Figma 51:159 上半帶、51:157 圖上覆蓋） */
+.intro__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(180deg, #f9f9f9 0%, #dce1e4 55%, #ffffff 100%),
+    linear-gradient(
+      180deg,
+      rgba(249, 249, 249, 0) 50%,
+      #f5f5f5 85%,
+      #ffffff 100%
+    );
+  background-size: 100% 50%, 100% 100%;
+  background-position: top, top;
+  background-repeat: no-repeat;
+}
+
+.intro__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 640px 1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.intro__player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 640 / 360;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  /* 淺色底上陰影減淡（原深色底 0.35 太重） */
+  box-shadow: 0 24px 48px rgba(17, 24, 39, 0.18);
+}
+
+.intro__player video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Figma 51:122 標題 50px/700/lh1.3（clamp：桌機 1920＝稿值） */
+.intro__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1.25rem + 1.8vw, 3.125rem);
+  line-height: 1.3;
+  margin-bottom: var(--space-4);
+}
+
+/* Figma 51:123 描述 24px/400/lh1.8 */
+.intro__desc {
+  font-size: clamp(1rem, 0.75rem + 0.65vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.8;
+  color: var(--text-regular);
+  margin-bottom: var(--space-5);
+  max-width: 52ch;
+}
+
+/* Figma 51:125 按鈕：240 寬、20px/500、白色箭頭 icon、下方投影 */
+.intro .btn-primary {
+  min-width: 240px;
+  font-weight: 500;
+  font-size: 20px;
+  filter: drop-shadow(0 16px 16px rgba(17, 24, 39, 0.2));
+}
+
+/* 箭頭 icon 白化（同 solutions.css .sl-hero__cta .btn-icon 前例） */
+.intro .btn-icon {
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 1024px) {
+  .intro__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .intro__player {
+    max-width: 640px;
+  }
+}
+
+/* ==========================================================================
+   4. SPACES App「智慧管理，盡在掌握」
+   ========================================================================== */
+.spaces-app {
+  position: relative;
+  overflow: hidden;
+  color: var(--text-dark);
+}
+
+/* 2026-09-09：.spaces-app__bg（#eef3ff 底 + home-hero2.mp4）已移除，
+   本段背景改由外層 .story-band 的 hero3 統一提供（見檔尾第 12 區塊）。 */
+
+.spaces-app__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.spaces-app__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1rem + 1.8vw, 2.5rem);
+  margin-bottom: var(--space-4);
+}
+
+.spaces-app__desc {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-regular);
+  margin-bottom: var(--space-5);
+  max-width: 52ch;
+}
+
+/* Figma 51:173 對稿：文字 20px/400/lh1.45、列表間距 8、item 內距 16 */
+.spaces-app__checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.spaces-app__checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: clamp(1rem, 0.75rem + 0.45vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--text-regular);
+}
+
+.spaces-app__checklist-item img {
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+}
+
+/* 兩張 PNG 的外框基準不一樣，不能用同一套百分比寬度並排：
+   phone-1 是傾斜約 41° 的手機，448×473 的近正方形外框裡機身只佔約 192×461；
+   phone-2 幾乎就是機身本身（204×491）。舊寫法 phone-1 42% / phone-2 58%
+   會讓畫面上的機身長度差到 3.2 倍（斜的那支像小掛飾），而且 641–1024px
+   沒有縮小規則，phone-2 會被撐成 1000～1360px 高、整段 section 高過一個螢幕。
+   改用「高度」當共同基準：兩張圖等高時機身長度就幾乎相等（461 vs 491）。 */
+.spaces-app__phones {
+  /* 上限 420px < 兩張圖的原生高（473 / 491），確保永遠是縮小、不會放大失真 */
+  --phone-h: clamp(220px, 30vw, 420px);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--phone-h);
+}
+
+/* 每支手機 = 機殼（-device.png，螢幕處是純黑）+ App 畫面（-screen.png）兩層疊合。
+   兩張 PNG 都是 Figma 緊裁匯出、畫布大小不同，疊合偏移是實測出來的：
+   把 screen 的不透明像素對進 device 的黑色玻璃區，取「完全落在玻璃內」那批 offset 的中心，
+   phone1 = (7, -3)／phone2 = (6, 7)（單位為 device 原生像素）。
+   下面所有百分比都是拿這組像素值除以 device 畫布尺寸換算，改圖時要一起重算。 */
+.spaces-app__phone {
+  position: relative;
+  height: var(--phone-h);
+  /* 寬度用 calc 明寫，不靠 aspect-ratio（Safari 15 才支援）也不靠 width:auto
+     ——後者會跟 base.css 的 img{max-width:100%} 在收縮容器裡互相咬到 */
+  flex-shrink: 0;
+}
+
+.spaces-app__phone-device {
+  width: 100%;
+  height: 100%;
+}
+
+.spaces-app__phone-screen {
+  position: absolute;
+}
+
+/* phone1：device 448×473、screen 446×481 @ (7, -3) */
+.spaces-app__phone--1 {
+  z-index: 2;
+  width: calc(var(--phone-h) * 448 / 473);
+  /* 斜手機右下角尖端壓在直立手機左緣上；用 --phone-h 當基準，
+     疊合量才會跟著手機縮放，不會像舊的 % 那樣跟容器寬度綁在一起 */
+  margin-right: calc(var(--phone-h) * -0.1);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
+}
+
+.spaces-app__phone--1 .spaces-app__phone-screen {
+  left: 1.5625%; /* 7 / 448 */
+  top: -0.63425%; /* -3 / 473 */
+  width: 99.55357%; /* 446 / 448 */
+  height: 101.69133%; /* 481 / 473 */
+}
+
+/* phone2：device 204×491、screen 178×477 @ (6, 7) */
+.spaces-app__phone--2 {
+  z-index: 1;
+  width: calc(var(--phone-h) * 204 / 491);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.18));
+}
+
+.spaces-app__phone--2 .spaces-app__phone-screen {
+  left: 2.94118%; /* 6 / 204 */
+  top: 1.42566%; /* 7 / 491 */
+  width: 87.2549%; /* 178 / 204 */
+  height: 97.14868%; /* 477 / 491 */
+}
+
+@media (max-width: 1024px) {
+  .spaces-app__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .spaces-app__phones {
+    order: -1;
+  }
+}
+
+/* ==========================================================================
+   5. 三卡 hover
+   ========================================================================== */
+.cards3 {
+  overflow: hidden;
+}
+
+/* 左：3 張卡；右：What's SPACES 說明文案（Figma node 59:1209 右側區塊） */
+.cards3__layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.cards3__intro-title {
+  margin-block: var(--space-3) var(--space-4);
+}
+
+@media (max-width: 1024px) {
+  .cards3__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cards3__intro {
+    order: -1;
+  }
+}
+
+/* Figma node 59:1209 實測：三卡彼此重疊，非等距排列。
+   基準（未縮放）卡片座標，相對同一父容器（59:1214, DIV），總跨距 0～719px：
+   主動式風險管理(59:1226) x=0   w=320 h=440
+   次世代韌性保全(59:1236) 還原縮放前 x=199 w=320 h=440（Figma 內顯示為預設放大態 x=189 w=340，
+     即 base 位置以中心點放大 1.0625 倍後的結果，與現有 hover/預設 scale(1.06) 邏輯一致）
+   可信任的證據(59:1215)   x=399 w=320 h=440
+   重疊量：左卡×中卡 = 320-199 = 121px；中卡×右卡 = 519-399 = 120px
+   換算成容器寬度（719px）百分比：card 寬 320/719≈44.51%；重疊 121/719≈16.83%、120/719≈16.70% */
+.cards3__grid {
+  display: flex;
+  align-items: stretch;
+}
+
+/* 卡片基底值取自非放大兄弟卡（51:205/51:216）：320×440、padding 44、radius 8；
+   51-226 顯示的小數值＝放大態 ×1.0625，中間卡 scale(1.06) 不動，這裡寫基底值 */
+.cards3__card {
+  position: relative;
+  flex: 0 0 44.51%;
+  border-radius: var(--radius-sm);
+  padding: 44px;
+  background: #f6f8fc;
+  color: var(--text-dark);
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+  transform: scale(1);
+}
+
+/* 預設中間卡放大置中、藍色漸層 —— 純 CSS 完成，不用 JS */
+.cards3__grid .cards3__card:nth-child(2) {
+  margin-left: -16.83%;
+  background: var(--brand-gradient-card);
+  color: var(--white);
+  transform: scale(1.06);
+  box-shadow: 0 24px 48px rgba(37, 99, 235, 0.28);
+  z-index: 2;
+}
+
+.cards3__grid .cards3__card:nth-child(3) {
+  margin-left: -16.7%;
+}
+
+.cards3__grid:hover .cards3__card:nth-child(2):not(:hover) {
+  transform: scale(1);
+  box-shadow: none;
+  background: #f6f8fc;
+  color: var(--text-dark);
+}
+
+.cards3__grid .cards3__card:hover {
+  transform: scale(1.06);
+  box-shadow: 0 24px 48px rgba(37, 99, 235, 0.28);
+  background: var(--brand-gradient-card);
+  color: var(--white);
+  z-index: 3;
+}
+
+.cards3__card-icon {
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+  transition: color 0.35s ease;
+}
+
+.cards3__grid .cards3__card:nth-child(2) .cards3__card-icon,
+.cards3__grid .cards3__card:hover .cards3__card-icon {
+  color: var(--white);
+}
+
+/* Figma 基底：標題 25px/lh1.44、標題→描述 gap 32 */
+.cards3__card-title {
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1rem + 0.5vw, 1.5625rem);
+  line-height: 1.44;
+  margin-bottom: var(--space-5);
+}
+
+/* Figma 基底：描述 20px/lh1.4；顯式雙色取代 opacity（淺底深灰／漸層底淺灰） */
+.cards3__card-desc {
+  font-size: clamp(1rem, 0.75rem + 0.45vw, 1.25rem);
+  line-height: 1.4;
+  color: var(--text-regular);
+}
+
+.cards3__grid .cards3__card:nth-child(2) .cards3__card-desc,
+.cards3__grid .cards3__card:hover .cards3__card-desc {
+  color: var(--line);
+}
+
+/* 中間卡讓位（非 hover）時描述色同步降回淺底深灰 */
+.cards3__grid:hover .cards3__card:nth-child(2):not(:hover) .cards3__card-desc {
+  color: var(--text-regular);
+}
+
+@media (max-width: 1024px) {
+  /* 窄螢幕改回不重疊的堆疊排列，避免重疊效果在小寬度下顯得擁擠 */
+  .cards3__grid {
+    flex-direction: column;
+  }
+
+  .cards3__grid .cards3__card {
+    flex: 1 1 auto;
+    /* 堆疊排列時降回原高度，避免三張 440 高卡片拉長版面 */
+    min-height: 320px;
+  }
+
+  .cards3__grid .cards3__card:not(:last-child) {
+    margin-bottom: var(--space-4);
+  }
+
+  .cards3__grid .cards3__card:nth-child(2),
+  .cards3__grid .cards3__card:nth-child(3) {
+    margin-left: 0;
+  }
+
+  .cards3__grid .cards3__card:nth-child(2) {
+    transform: scale(1);
+  }
+
+  .cards3__grid .cards3__card:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* ==========================================================================
+   6. Resilience
+   ========================================================================== */
+/* Figma 59:979 對稿：底層是上深下亮的藍色漸層，不是單一實色。 */
+.resilience {
+  position: relative;
+  overflow: hidden;
+  /* 稿上（Figma 59:979）本區塊是 1920×1383、上下 padding 各 80。
+     全站 .section 預設是 --space-8（96），這裡照稿覆寫。 */
+  padding-block: 80px;
+  background: linear-gradient(180deg, #011f5f 0%, #0142d3 100%);
+  color: var(--white);
+}
+
+/* Figma 59:1028 的光束攝影疊層。稿上尺寸 2182×1228，中心錨在
+   (50% + 723px, 50% - 424.5px)，所以用 translate 做中心對齊而不是 background-position
+   ——百分比的 background-position 算的是「容器與圖的差值比例」，對不上設計稿座標。
+   Figma 用的 mix-blend-mode 是 plus-lighter，2023 才普及（Chrome 111／Safari 15.4），
+   不符本站 2021 baseline，改用 screen：深底加亮的情境下兩者視覺接近。
+
+   2026-09-09：改為 ::before → .resilience__streak 實體元素，內含 home-hero4（同一張
+   光軌的動態版，框比 2182/1228=1.7769 與影片 16:9 幾乎相同）。靜態 webp 降級為容器
+   背景當墊底＝影片載入前／reduced-motion／手機時看到的畫面，等同免費的 poster。
+   screen 混合下黑色等於透明，所以 .resilience 的藍色漸層完全不受影響。 */
+.resilience__streak {
+  position: absolute;
+  /* 垂直改用「距 section 頂端」而非中心錨點：稿上 y=-347 是相對 section 頂端量的，
+     中心錨點會讓它隨 section 實際高度浮動（實測我們的 section 比稿上矮 38px，
+     光軌就偏了 19px）。水平仍用中心錨點，窄視窗時構圖才會跟著置中。 */
+  /* 全部改成相對 section 寬度的比例（稿：1920 寬）——原本寫死 px 不會縮，
+     視窗越窄光軌相對越大，就會壓到文字。
+       left  592/1920 = 30.833%
+       width 2182/1920 = 113.646%
+       top   -347/1920 → -18.073vw（top 的 % 是相對容器高度，會隨內容浮動，故用 vw）
+     aspect-ratio 取代固定高度，比例恆為 2182:1228。 */
+  top: -18.073vw;
+  left: 30.833%;
+  width: 113.646%;
+  aspect-ratio: 2182 / 1228;
+  height: auto;
+  background-image: url("../../images/home/resilience-streak.webp");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.resilience__streak video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.resilience__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  /* 稿上兩欄各 760（59:980 / 59:1030），間距 80，容器 1600 → 1fr 1fr 剛好各 760。
+     原本右欄寫死 863px 是為了容納 orbit 的 callout，但那讓左欄被壓到 449
+     （稿上是 600）。稿上 callout 本來就溢出欄位，交給 .resilience__orbit-stage
+     用負 margin 處理，欄寬回歸設計值。 */
+  /* 必須用 minmax(0, 1fr) 而非 1fr：1fr 的隱含最小值是 min-content，
+     而右欄的 orbit stage 是 882px 寬（刻意溢出），會把右欄撐到 841、
+     反過來壓縮左欄。minmax(0,...) 允許欄位小於內容，溢出交給 overflow 處理。 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 80px;
+  /* 兩欄內容高度不同（左欄三段 feature、右欄文案＋圖表），置中會讓兩欄頂端錯開，
+     改為靠上對齊，讓 Resilience 與 Ecosystem 兩組標題起始高度一致。 */
+  align-items: start;
+}
+
+/* 稿上內容區 x 160→1760＝1600 寬（1920 − 160×2）。
+   .container 預設帶 24px 的 padding-inline，會讓實際內容帶縮成 1552、把兩欄都推歪，
+   所以照 .stats > .container 的前例把內距換成外側留白（窄視窗仍有 24px 邊距）。 */
+.resilience > .container {
+  max-width: 1600px;
+  width: calc(100% - 48px);
+  padding-inline: 0;
+}
+
+/* 兩欄共用同一組內距（稿上 59:980 / 59:1030 的子元素都從 x=80, y=80 起算）。
+   80px 是 1920 稿的值，直接套到窄視窗會把文字擠爆——375 時容器只有 327，
+   扣掉左右各 80 只剩 167px 可用，一行放不下幾個字。改成 clamp 隨視窗遞減：
+     375 → 22.5 ／ 414 → 24.8 ／ 768 → 46 ／ 1024 → 61 ／ 1333 以上回到稿值 80。
+   下限 16 是避免超窄機種完全貼邊（容器本身已有 24px 外側留白）。 */
+.resilience__inner > * {
+  padding: clamp(16px, 6vw, 80px);
+}
+
+/* 唯一的例外：雙欄桌機時右欄不留右內距。
+   右欄的 .resilience__orbit-intro 稿上是 640 寬，欄寬 760 扣掉左內距 80 剩 680 才容得下；
+   補上右內距會把可用寬壓到 600、讓文案提早換行。（orbit stage 本身是
+   width:882 + margin-left:-121 的固定尺寸溢出，不受內距影響。）
+   ≤1280 單欄時 stage 已改 display:contents、orbit 改 max-width 置中，
+   這個理由不成立，所以那邊兩欄內距完全一致——這正是原本右欄手機上貼右邊的原因。 */
+@media (min-width: 1281px) {
+  .resilience__orbit-col {
+    padding-right: 0;
+  }
+}
+
+/* Figma 59:985 對稿：深色底上的 eyebrow 改白字，只覆寫顏色。
+   字級 16px／行高 24px／字距 0 已是 base .eyebrow 的值，
+   維持原始大小寫則由 .eyebrow--normal-case 處理，這裡不重複宣告。
+   Resilience 與 Ecosystem 兩處共用。 */
+.resilience__eyebrow {
+  color: var(--white);
+}
+
+.resilience__title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1rem + 1.8vw, 2.25rem);
+  line-height: 1.4;
+  margin-bottom: var(--space-4);
+}
+
+/* Figma 59:987 對稿：24px/lh1.8、淺灰 --line */
+.resilience__desc {
+  font-size: clamp(1rem, 0.75rem + 0.65vw, 1.5rem);
+  line-height: 1.8;
+  color: var(--line);
+  margin-bottom: var(--space-6);
+}
+
+/* Figma 59:988 對稿：整組 feature 沒有任何 border／divider，
+   原本每項上方那條 rgba(255,255,255,.35) 的分隔線是稿上沒有的，已移除。
+   gap 取 52px 而非稿上的 48px：Figma 的圖示外面還包一層 56×56 的空容器
+   （無背景無框，純佔位），48px 圖示置中於其中 = 圖示邊到文字實際是 4 + 48。
+   這裡不為了純間距多包一層 DOM，直接把差值算進 gap。 */
+.resilience__feature {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  padding-block: 44px;
+}
+
+.resilience__feature img {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.resilience__feature-title {
+  font-weight: 700;
+  font-size: 25px;
+  line-height: 36px;
+  margin-bottom: var(--space-3);
+}
+
+.resilience__feature-desc {
+  font-size: 20px;
+  line-height: 29px;
+  color: var(--line);
+}
+
+/* 右欄容器：讓 Ecosystem 文字與四圓圈圖同屬一個 grid 子項，避免版面跑到左欄下方 */
+.resilience__orbit-col {
+  display: flex;
+  flex-direction: column;
+  /* 內距由上面 .resilience__inner > * 統一供應（含桌機的 padding-right: 0 例外），
+     這裡不再各寫一份，避免兩欄設定漂移。 */
+}
+
+/* Ecosystem 文字區塊：四圓圈圖表上方的說明文案。
+   Figma 59:1031：三個文字節點都在 x=0（靠左），區塊寬 640，且與圓環群組
+   59:1037 同樣起於 x=80 —— 也就是文字左緣要對齊圓環群組；而群組內的圓圈本體
+   （59:1038 Group 1）又縮排 18px，所以文字比圓圈左緣再往左 18px。
+   callout 是往群組外溢出的，不參與對齊。 */
+.resilience__orbit-intro {
+  text-align: left;
+  max-width: 640px;
+  /* 欄位已有 80px 內距，文字就落在稿上的 x=1080，不需要再縮排 */
+  margin-inline: 0;
+  margin-bottom: var(--space-6);
+}
+
+/* Figma node 59:1037：同心圓、中央 Logo 與四組服務 callout */
+.resilience__orbit-stage {
+  position: relative;
+  /* 稿上 callout 的可見範圍是內容框的 -121 → 761（共 882），刻意往兩側溢出欄位。
+     用負 margin 讓它溢出，而不是反過來把欄位撐大——後者會壓縮左欄。 */
+  flex: 0 0 auto;
+  width: 882px;
+  height: 715px;
+  margin-left: -121px;
+}
+
+.resilience__orbit {
+  position: relative;
+  width: 603px;
+  aspect-ratio: 1 / 1;
+  margin: 0;
+  position: absolute;
+  top: 49px;
+  /* 稿上圓環群組在內容框的 x=18；stage 起點在 -121，故 18-(-121)=139 */
+  left: 139px;
+}
+
+.resilience__rings {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.84);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.resilience__ring {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(110, 153, 238, 0.28);
+  inset: 0;
+}
+
+.resilience__ring--2 {
+  inset: 8.9%;
+  background: rgba(110, 153, 238, 0.34);
+}
+
+.resilience__ring--3 {
+  inset: 17.85%;
+  background: rgba(110, 153, 238, 0.42);
+}
+
+.resilience__ring--core {
+  inset: 27.12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef5ff;
+  opacity: 0;
+  transform: scale(0.84);
+  transition:
+    opacity 0.6s ease-out 0.08s,
+    transform 0.6s ease-out 0.08s;
+}
+
+.resilience__ring--core img {
+  width: 197px;
+  height: 20px;
+  max-width: 72%;
+  object-fit: contain;
+}
+
+.resilience__orbit.is-visible .resilience__rings,
+.resilience__orbit.is-visible .resilience__ring--core {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.resilience__callout {
+  --callout-shift: 40px;
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 278px;
+  opacity: 0;
+  transition:
+    opacity 0.48s ease-out,
+    transform 0.48s ease-out;
+}
+
+.resilience__callout-icon {
+  display: grid;
+  width: 96px;
+  height: 96px;
+  place-items: center;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  background: #0069ff;
+}
+
+.resilience__callout--left .resilience__callout-icon,
+.resilience__callout--right .resilience__callout-icon {
+  background: #4b35cc;
+}
+
+.resilience__callout-icon img {
+  display: block;
+  object-fit: contain;
+}
+
+.resilience__callout--top .resilience__callout-icon img,
+.resilience__callout--bottom .resilience__callout-icon img {
+  width: 44px;
+  height: 44px;
+}
+
+.resilience__callout--left .resilience__callout-icon img,
+.resilience__callout--right .resilience__callout-icon img {
+  width: 48px;
+  height: 48px;
+}
+
+.resilience__callout--bottom .resilience__callout-icon img {
+  width: 27.1562px;
+  height: 44px;
+}
+
+.resilience__callout-copy {
+  box-sizing: border-box;
+  width: 222px;
+  min-height: 61px;
+  padding: 8px 24px;
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: 0 16px 16px rgba(12, 12, 13, 0.08);
+  text-align: center;
+}
+
+.resilience__callout-title {
+  color: #111827;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.resilience__callout-sub {
+  margin-top: 2px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: normal;
+}
+
+.resilience__callout--top {
+  top: -49px;
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(var(--callout-shift) * -1));
+  transition-delay: 0.24s;
+}
+
+.resilience__callout--right {
+  top: calc(50% + 23px);
+  right: -19px;
+  transform: translate(50%, -50%) translateX(var(--callout-shift));
+  transition-delay: 0.32s;
+}
+
+.resilience__callout--bottom {
+  bottom: -63px;
+  left: 50%;
+  transform: translateX(-50%) translateY(var(--callout-shift));
+  transition-delay: 0.4s;
+}
+
+.resilience__callout--left {
+  top: calc(50% + 23px);
+  left: -19px;
+  transform: translate(-50%, -50%) translateX(calc(var(--callout-shift) * -1));
+  transition-delay: 0.48s;
+}
+
+.resilience__orbit.is-visible .resilience__callout--top,
+.resilience__orbit.is-visible .resilience__callout--bottom {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.resilience__orbit.is-visible .resilience__callout--right {
+  opacity: 1;
+  transform: translate(50%, -50%);
+}
+
+.resilience__orbit.is-visible .resilience__callout--left {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resilience__rings,
+  .resilience__ring--core,
+  .resilience__callout {
+    opacity: 1;
+    transition: none;
+  }
+
+  .resilience__rings,
+  .resilience__ring--core {
+    transform: scale(1);
+  }
+
+  .resilience__callout--top,
+  .resilience__callout--bottom {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .resilience__callout--right {
+    transform: translate(50%, -50%);
+  }
+
+  .resilience__callout--left {
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* 中型桌機：保留左右雙欄，但圖表作等比例縮放，欄間仍保有 80px。 */
+@media (min-width: 1281px) and (max-width: 1519px) {
+  .resilience > .container {
+    max-width: var(--container-max);
+  }
+
+  .resilience__inner {
+    grid-template-columns: minmax(0, 1fr) 708px;
+    column-gap: 80px;
+  }
+
+  .resilience__orbit-stage {
+    flex-basis: 708px;
+    width: 708px;
+    height: 586px;
+  }
+
+  .resilience__orbit {
+    top: 40px;
+    left: 107px;
+    transform: scale(0.82);
+    transform-origin: top left;
+  }
+
+  /* 圓環在此斷點是 left:107px + scale(.82)，18px 的縮排同步縮成約 15px；
+     欄寬 708，區塊寬按 708/760 縮到 596，右側才留得住。 */
+  .resilience__orbit-intro {
+    max-width: 596px;
+    margin-left: 92px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .resilience__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .resilience > .container {
+    max-width: var(--container-max);
+  }
+
+  .resilience__orbit-stage {
+    display: contents;
+  }
+
+  /* 單欄時圓環改置中，文字改與上方 Resilience 區塊一樣貼齊容器左緣 */
+  .resilience__orbit-intro {
+    max-width: 640px;
+    margin-inline: 0;
+  }
+
+  .resilience__orbit {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    max-width: 400px;
+    margin: 44px auto 56px;
+    transform: none;
+  }
+
+  .resilience__callout {
+    --callout-shift: 28px;
+    width: 220px;
+    gap: 12px;
+  }
+
+  .resilience__callout-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .resilience__callout--top .resilience__callout-icon img,
+  .resilience__callout--bottom .resilience__callout-icon img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .resilience__callout--left .resilience__callout-icon img,
+  .resilience__callout--right .resilience__callout-icon img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .resilience__callout--bottom .resilience__callout-icon img {
+    width: 21px;
+    height: 34px;
+  }
+
+  .resilience__callout-copy {
+    width: 180px;
+    min-height: 56px;
+    padding: 7px 16px;
+  }
+
+  .resilience__callout-title {
+    font-size: 14px;
+  }
+
+  .resilience__callout-sub {
+    font-size: 12px;
+  }
+
+  .resilience__callout--top {
+    top: -36px;
+  }
+
+  .resilience__callout--bottom {
+    bottom: -48px;
+  }
+
+  .resilience__callout--left {
+    left: -12px;
+  }
+
+  .resilience__callout--right {
+    right: -12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .resilience__orbit {
+    max-width: 300px;
+    margin: 40px auto 52px;
+  }
+
+  .resilience__callout {
+    --callout-shift: 16px;
+    width: 124px;
+    gap: 8px;
+  }
+
+  .resilience__callout-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .resilience__callout--top .resilience__callout-icon img,
+  .resilience__callout--bottom .resilience__callout-icon img {
+    width: 27px;
+    height: 27px;
+  }
+
+  .resilience__callout--left .resilience__callout-icon img,
+  .resilience__callout--right .resilience__callout-icon img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .resilience__callout--bottom .resilience__callout-icon img {
+    width: 17px;
+    height: 27px;
+  }
+
+  .resilience__callout-copy {
+    width: 124px;
+    min-height: 50px;
+    padding: 6px 8px;
+  }
+
+  .resilience__callout-title {
+    font-size: 12px;
+  }
+
+  .resilience__callout-sub {
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .resilience__callout--top {
+    top: -28px;
+  }
+
+  .resilience__callout--bottom {
+    bottom: -38px;
+  }
+
+  .resilience__callout--left {
+    left: 12%;
+  }
+
+  .resilience__callout--right {
+    right: 12%;
+  }
+}
+
+/* ==========================================================================
+   7. Solutions 卡片區（手動捲動，非自動輪播）
+   ========================================================================== */
+.solutions > .container {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.solutions__head {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  text-align: center;
+  margin-bottom: var(--space-6);
+  padding-inline: var(--space-4);
+}
+
+.solutions__scroller-wrap {
+  --solutions-gutter: 80px;
+  position: relative;
+  width: 100%;
+}
+
+.solutions__scroller {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding: 0 var(--solutions-gutter) var(--space-3);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  -webkit-overflow-scrolling: touch;
+}
+
+.solutions__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.solutions__scroller.is-dragging {
+  cursor: grabbing;
+}
+
+.solutions__card {
+  position: relative;
+  /* 空間足夠時依卡片數量均分；放不下時維持基本寬度並橫向捲動。 */
+  flex: 1 0 318px;
+  height: 338px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: var(--white);
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08);
+  color: var(--text-dark);
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition:
+    flex-basis 0.3s ease,
+    height 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.2s ease;
+}
+
+.solutions__card-media {
+  position: relative;
+  height: 212px;
+  overflow: hidden;
+}
+
+/* 卡片圖改用 <img> 而非 CSS 背景圖，才吃得到 loading="lazy"
+   （這一區在摺線下，五張合計 630KB）。object-fit: cover 等效於原本的
+   background-size: cover + background-position: center，hover 時 media 變成
+   absolute inset:0，img 跟著填滿，行為與改動前一致。 */
+.solutions__card-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.solutions__card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: url("../../images/home/solution-card-overlay.svg") center / 100%
+    100% no-repeat;
+  transition: opacity 0.25s ease;
+}
+.solutions__card:is(:hover, :focus-visible, :active) {
+  flex-basis: 756px;
+  height: 454px;
+  border-color: transparent;
+  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.16);
+  color: var(--white);
+}
+
+.solutions__card:is(:hover, :focus-visible, :active) .solutions__card-media {
+  position: absolute;
+  inset: 0;
+  height: auto;
+}
+
+.solutions__card:is(:hover, :focus-visible, :active)
+  .solutions__card-media::after {
+  opacity: 1;
+}
+
+.solutions__card-body {
+  padding: var(--space-4);
+  width: 100%;
+}
+
+.solutions__card:is(:hover, :focus-visible, :active) .solutions__card-body {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding: 24px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
+}
+
+.solutions__card-label {
+  display: block;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.solutions__card-sub {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-caption);
+}
+
+.solutions__card:is(:hover, :focus-visible, :active) .solutions__card-sub {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.solutions__arrow {
+  position: absolute;
+  z-index: 2;
+  /* 固定對齊未展開卡片（338px）的垂直中心，避免 hover 撐高外框時跟著位移。 */
+  top: 169px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+  flex-shrink: 0;
+  background: var(--white);
+  transform: translateY(-50%);
+}
+
+.solutions__arrow--prev {
+  left: calc(var(--solutions-gutter) - 28px);
+}
+.solutions__arrow--next {
+  right: calc(var(--solutions-gutter) - 28px);
+}
+
+.solutions__arrow:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.solutions__arrow:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.solutions__arrow img {
+  width: 24px;
+  height: 24px;
+}
+
+.solutions__arrow--prev img {
+  transform: scaleX(-1);
+}
+
+.solutions__footer {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  margin-top: var(--space-6);
+  text-align: center;
+  padding-inline: var(--space-4);
+}
+
+.solutions__footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+@media (min-width: 1920px) {
+  .solutions__scroller-wrap {
+    --solutions-gutter: 2vw;
+  }
+}
+
+@media (max-width: 640px) {
+  .solutions__head {
+    text-align: center;
+    padding-inline: var(--space-3);
+  }
+
+  .solutions__arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .solutions__arrow--prev {
+    left: calc(var(--solutions-gutter) - 22px);
+  }
+  .solutions__arrow--next {
+    right: calc(var(--solutions-gutter) - 22px);
+  }
+
+  .solutions__scroller-wrap {
+    --solutions-gutter: 40px;
+  }
+
+  .solutions__footer {
+    padding-inline: var(--space-3);
+  }
+
+  .solutions__card {
+    flex-basis: 72vw;
+  }
+
+  .solutions__card:is(:hover, :focus-visible, :active) {
+    flex-basis: 88vw;
+  }
+}
+
+/* ==========================================================================
+   8. Process 4 步驟 —— Figma 132:2157 對稿
+
+   垂直留白刻意維持 .section 的 --space-8（96px）而非稿上的 80px，
+   保住與相鄰 Solutions／News 的節奏；水平留白交給 .container，
+   但稿上內容寬 1600、本站 --container-max 只有 1280，4 欄會過擠，
+   因此比照 .resilience 放寬到 1440。
+   ========================================================================== */
+.process {
+  position: relative;
+  /* 波浪帶往右溢出約 619px，靠 section 自己收邊而不依賴 body 的 overflow-x。
+     盾牌上緣剛好落在 section 上緣 -1px，所以 hidden 只裁掉 1px。
+     不用 overflow: clip —— Safari 要 16 才支援，超出本站 2021 baseline。 */
+  overflow: hidden;
+}
+
+.process > .container {
+  position: relative;
+  z-index: 2;
+  max-width: 1440px;
+}
+
+/* Figma 132:2201 的 halftone 網點底。實測值：間距 24px、點 4px、疊合後色 #efefef。
+   稿上的點是 4px 方塊，這裡用 radial-gradient 畫圓點 —— 在 16/255 的對比下方圓
+   肉眼無法分辨，而畫方塊需要交叉兩層 gradient 再靠 mask 取交集，會跟下面的
+   上下淡出 mask 打架（mask-composite 是 2023 才普及的）。
+   底層保持透明（不填白），這樣就算上下溢出 70px 也只是極淡網點疊在鄰區留白上。 */
+.process__halftone {
+  position: absolute;
+  top: -70px;
+  bottom: -70px;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle at center,
+    #efefef 0 2px,
+    rgba(239, 239, 239, 0) 2.6px
+  );
+  background-size: 24px 24px;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 70px,
+    #000 calc(100% - 70px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 70px,
+    #000 calc(100% - 70px),
+    transparent 100%
+  );
+}
+
+/* ---- 標題區（Figma 132:2158，左文字右視覺）---- */
+.process__head {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 80px;
+  align-items: center;
+  min-height: 380px;
+  margin-bottom: var(--space-7);
+}
+
+/* Figma 132:2160 是 Noto Sans TC Bold（文案為中文）；字級／行高／字距／顏色
+   都已是 base .eyebrow 的值，大小寫由 .eyebrow--normal-case 處理。 */
+.process__eyebrow {
+  font-family: var(--font-tc);
+}
+
+.process__title {
+  font-size: clamp(1.75rem, 1.1rem + 2vw, 3.125rem);
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin-bottom: var(--space-4);
+}
+
+.process__desc {
+  font-size: clamp(1rem, 0.75rem + 0.65vw, 1.5rem);
+  line-height: 1.8;
+  color: var(--text-regular);
+}
+
+/* 裝飾舞台：鎖成稿上標題區的 1600:428，讓子元素能用「Figma 座標 ÷ 1600 或 ÷ 428」
+   的百分比定位，任何寬度都等比。aspect-ratio = Chrome 88／FF 89／Safari 15。 */
+.process__visual {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 1600 / 428;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.process__visual > * {
+  position: absolute;
+}
+
+/* 取代 Figma 132:2166（627×418／blur(60px)／multiply）。multiply 疊純白等於不作用，
+   直接用 radial-gradient 畫柔邊，連 filter: blur 都省掉。座標為推估值。 */
+.process__glow {
+  left: 56%;
+  top: 22%;
+  width: 39.19%;
+  height: 97.66%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(37, 99, 235, 0.22) 0%,
+    rgba(37, 99, 235, 0.1) 45%,
+    rgba(37, 99, 235, 0) 100%
+  );
+}
+
+/* Figma 132:2165：1222×250，水平錨點 calc(50% + 357px) 指的是「中心」不是左緣
+   （跟 .resilience__streak 的光束同一種寫法），所以要補 translateX(-50%)，
+   否則整條波浪會往右偏、不會延伸到盾牌左側。右端刻意溢出到 section 邊緣外。 */
+.process__wave {
+  left: calc(50% + 22.31%);
+  top: 47.9%;
+  width: 76.38%;
+  height: auto;
+  transform: translateX(-50%);
+}
+
+/* Figma 132:2167：641×641 @ (930, -81)，往上溢出標題區 */
+.process__shield {
+  left: 58.13%;
+  top: -18.93%;
+  width: 40.06%;
+  height: auto;
+}
+
+/* ---- 4 步驟膠囊底板（Figma 132:2168）----
+   稿值就是 rgba(255,255,255,.12) + blur(50px)。已知並接受：白疊白色差為 0、
+   網點覆蓋率又低，實際在白底上幾乎看不出這層（Figma 裡看得到是因為畫布是灰底）。
+   也因為本來就近乎不可見，Firefox <103 不支援 backdrop-filter 時不需另寫材質。 */
+.process__capsule {
+  display: flex;
+  /* 稿上是 flex-start，改 stretch 才能讓 4 條側線等長 */
+  align-items: stretch;
+  width: 100%;
+  padding-inline: 80px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@supports (backdrop-filter: blur(50px)) or (-webkit-backdrop-filter: blur(50px)) {
+  .process__capsule {
+    -webkit-backdrop-filter: blur(50px);
+    backdrop-filter: blur(50px);
+  }
+}
+
+/* ---- 單一步驟（Figma 132:2169）：無背景／無框線／無圓角／無陰影 ---- */
+.process__step {
+  flex: 1 0 0;
+  /* 沒有 min-width: 0 的話，長中文字串會把 flex-basis: 0 撐開，4 欄變不等寬 */
+  min-width: 0;
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+}
+
+/* Figma 132:2170 實測：不是漸層，是一條 1px #e5e7eb 全高底線，
+   再疊一段 3px #2563eb（20.79% → 41.48%）。用兩層 background 重現：
+   上層 3px 寬的藍段靠左，下層 1px 灰線置中於 3px 內。
+   稿上兩條線各有 1px 的水平位移（微傾），差異肉眼不可見，這裡畫成垂直。
+   高度不抄稿上的固定 232px —— 那是特定文案長度的量測值，文案一改就會
+   「線比字短一截」或戳出卡片；用 stretch 讓 4 條線自動等長並貼齊內容。 */
+.process__step::before {
+  content: "";
+  flex: 0 0 3px;
+  align-self: stretch;
+  min-height: 160px;
+  background-image: linear-gradient(
+      180deg,
+      transparent 0 20.79%,
+      var(--color-primary) 20.79% 41.48%,
+      transparent 41.48% 100%
+    ),
+    linear-gradient(var(--line), var(--line));
+  background-size: 3px 100%, 1px 100%;
+  background-position: 0 0, 1px 0;
+  background-repeat: no-repeat;
+}
+
+.process__step-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* Figma 132:2174：Plus Jakarta Sans ExtraBold Italic 34px／lh 25px／ls .68px。
+   字級按欄寬微縮到 30px（稿上文字欄 287px，本站 1440 container 下只剩約 268px）。
+   line-height 與 letter-spacing 換成無單位／em，縮放後比例才跟著走。 */
+.process__step-index {
+  font-family: var(--font-en);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.5rem, 1.25rem + 0.6vw, 1.875rem);
+  line-height: 0.74;
+  letter-spacing: 0.02em;
+  color: var(--color-primary);
+  white-space: nowrap;
+  /* 斜體尾端不被 min-width: 0 裁掉 */
+  padding-right: 2px;
+  opacity: 1;
+}
+
+/* Figma 132:2175：稿上 28px，按欄寬微縮到 24px。
+   lh 取 1.35 取代稿上的 normal —— normal 在中文字下各瀏覽器差異大。 */
+.process__step-title {
+  font-family: var(--font-tc);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1.35;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+/* Figma 132:2176：稿上 18px，微縮到 17px（18px 會比 news 卡片標題還大，破壞層級） */
+.process__step-desc {
+  font-size: clamp(1rem, 0.95rem + 0.15vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--text-regular);
+}
+
+/* ---- RWD（Figma 只有 1920 稿，斷點沿用全站的 1024／640）---- */
+@media (max-width: 1024px) {
+  .process__head {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    min-height: 0;
+  }
+
+  /* 視覺層改回一般流：移到文字下方居中 */
+  .process__visual {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 320px;
+    max-width: 60vw;
+    margin-inline: auto;
+  }
+
+  .process__shield {
+    position: static;
+    width: 100%;
+  }
+
+  /* 橫向 1222px 的波浪帶在這個寬度已無容身之處 */
+  .process__wave {
+    display: none;
+  }
+
+  .process__glow {
+    left: 4%;
+    top: 12%;
+    width: 92%;
+    height: 92%;
+  }
+
+  .process__capsule {
+    flex-wrap: wrap;
+    border-radius: var(--radius-lg);
+    padding-inline: var(--space-5);
+  }
+
+  .process__step {
+    flex: 1 1 calc(50% - 3px);
+    padding: var(--space-5) var(--space-3);
+  }
+}
+
+@media (max-width: 640px) {
+  .process__visual {
+    width: 200px;
+  }
+
+  .process__glow {
+    display: none;
+  }
+
+  /* 手機上一條幾乎無色差的長條底板只會製造視覺雜訊，直線＋文字已足夠表達流程；
+     同時避免橫跨全寬的 blur(50px) 圖層在中低階裝置掉幀。 */
+  .process__capsule {
+    border-radius: var(--radius-md);
+    background: none;
+    padding-inline: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .process__step {
+    flex: 1 1 100%;
+    padding: var(--space-4) 0;
+  }
+
+  .process__step::before {
+    min-height: 0;
+  }
+}
+
+/* ==========================================================================
+   9. News
+   ========================================================================== */
+.news__grid {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Figma 51:477 對稿：卡片是「左圖示｜直排文字欄｜右連結」三段式，
+   只有下框線、沒有四邊框也沒有圓角（原本首尾補圓角的做法是稿上沒有的）。 */
+.news__card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 16px var(--space-5) 17px;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 4px rgba(12, 12, 13, 0.05);
+}
+
+/* Figma 51:478：56×56 的圖示容器（無背景無框），內含 44×44 圖示 51:479 */
+.news__card-icon {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13.33px;
+}
+
+.news__card-icon img {
+  width: 44px;
+  height: 44px;
+}
+
+/* Figma 51:486：文字欄改直排，三個文字節點間距一律 8px */
+.news__card-body {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* Figma 51:487。稿上這行是混合字重（「2026」Bold／「·」Regular／中文 SemiBold），
+   不為了一行字拆三個 span，統一取 600。 */
+.news__card-date {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--color-primary);
+}
+
+.news__card-title {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 33px;
+  color: var(--text-dark);
+}
+
+.news__card-desc {
+  font-size: 18px;
+  line-height: 27px;
+  color: var(--text-regular);
+}
+
+/* Figma 51:490：連結移出文字欄，成為卡片第三段 */
+.news__card-link {
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--color-primary);
+}
+
+.news__footer {
+  margin-top: var(--space-6);
+  text-align: center;
+}
+
+.news__footer a {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Figma 只有 1920 稿，以下斷點為自訂：三段式在窄螢幕改成
+   「圖示＋文字」一列、連結換到下一列。 */
+@media (max-width: 640px) {
+  .news__card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-inline: 0;
+  }
+
+  .news__card-icon {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .news__card-icon img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .news__card-title {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .news__card-desc {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .news__card-link {
+    flex-basis: 100%;
+    font-size: 16px;
+  }
+}
+
+/* ==========================================================================
+   12. 共用背景影片帶（.story-band）
+   intro / spaces-app / cards3 三段共用 home-hero3——它是 intro-light-bg.webp
+   的動態版。影片鋪滿整帶、隨頁面捲動（非 sticky）：容器 relative/overflow:hidden
+   ＋影片層 absolute inset:0 ＋ object-fit:cover，沿用 .hero__bg / .spaces-app__bg
+   既有模式。
+
+   ⚠️ 取景實測（2026-09-10）：「橫向裁掉兩側約一半」只在 1920 桌機成立。
+   墊底圖 intro-light-bg.webp 原生 1920×1208，而這條帶在 375 手機上高達 2747px，
+   cover 放大 2.274 倍、**橫向裁掉 91.4%**，只顯示原圖中央 165px 寬的一條；
+   加上原圖的波紋集中在下半部（y≈580 以下），手機看到的中段是一片
+   stddev 只有 1.5–2.1 的死平灰藍 #e0e6ea，等於一個純色。同一組取景參數
+   對 <video> 也成立。手機要有質感需要換直式構圖的素材，調 background-position 救不了。
+
+   回復原狀：刪掉 index.html 的 .story-band wrapper 標籤 + 本區塊即可。
+   ========================================================================== */
+.story-band {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 墊底：影片載入前／載入失敗／autoplay 被擋／reduced-motion／手機時看到的畫面。
+   底色沿用原 .spaces-app__bg 的 #eef3ff，靜態圖沿用原 .intro__bg 的波紋圖。 */
+.story-band__bg {
+  position: absolute;
+  inset: 0;
+  background: #eef3ff url("../../images/home/intro-light-bg.webp") center / cover
+    no-repeat;
+}
+
+.story-band__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 白紗（Figma 51:157）：不是全幅均勻淡白，而是**左側重、右側全透明**的方向性遮罩。
+   稿上該節點旋轉 90°，換算到畫面軸是水平右→左：
+     右緣～50%（x 960–1920）完全透明 → 85.07%（x≈287）已是不透明 #f5f5f5 → 左緣 #ffffff。
+   作用是把左側文字區壓成近白底、右側手機／插圖區讓影片全開。
+
+   舊版是全幅 rgba(255,255,255,0.3)（濃度曾用截圖量過對比：0.3 時標題 14.79 / 內文 4.03）。
+   改成方向性後左側對比只會更好，右側則不再有白紗。 */
+.story-band__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    #f5f5f5 85.074%,
+    #ffffff 100%
+  );
+}
+
+/* 1024 以下版面收成單欄，文字不再只佔左側，方向性遮罩會變成「左邊一條白柱」而失去意義；
+   這段沿用舊的全幅 0.3。（767 以下影片本來就 display:none，不受影響。） */
+@media (max-width: 1024px) {
+  .story-band__bg::after {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.story-band__content {
+  position: relative;
+  z-index: 1;
+}
+
+/* 開洞：三段原本的實色／圖片背景改為透出底下影片。
+   用覆蓋而非刪除，保留隨時回退的能力。 */
+.story-band .intro {
+  background: transparent;
+}
+
+/* .intro__bg 連同波紋圖與兩層白漸層一起停用（已由 .story-band__bg 取代）。
+   保留 markup 只是為了能快速退回，確定不用之後可連同 index.html 的 div 一起刪。
+   （.spaces-app__bg 與 hero2 已於 2026-09-09 實際移除，不再需要這條覆蓋。）
+   注意：.intro__bg::after 那兩層是 51:159 / 51:157 的**舊譯**，寫成 180deg（垂直）且只
+   算在 intro 一段內——實際上那兩個節點都旋轉 90°，方向是水平的，範圍也跨三段。
+   正確版本見下面的 .intro::before 與 .story-band__bg::after，別再拿舊的當參考。 */
+.story-band .intro__bg {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   影片帶的上下收尾：把 Figma 的固定 px 換算成各自 section 的百分比，
+   這樣我們的 section 高度跟稿子不一樣也會自動對齊。
+
+   Figma（Home 頁面座標）：背景群組 51:155 從 intro 頂端 y=1567 起、高 1528，
+   因為 intro 那個 section 沒開 overflow-clip，整組往下溢出 882px 到 y=3095。
+     51:159 靜態上段  y 1567–1887  → intro 的 0–49.536%（320 / 646）
+     51:156 影片      y 1887–3095  → intro 後 50.5% ＋ spaces-app 全段 ＋ cards3 前 305px
+     51:158 白色淡出  y 2827–3095  → cards3 的 5.498%–45.319%（37 / 673 → 305 / 673）
+   -------------------------------------------------------------------------- */
+
+/* 51:159：intro 上半的不透明橫向灰白洗色，同時就是影片帶的上緣切齊處。
+   節點旋轉 90°，換算到畫面軸是水平右→左：右緣 #f9f9f9 → 55% #dce1e4 → 左緣 #ffffff。 */
+.story-band .intro::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 49.536%; /* 320 / 646 */
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(to left, #f9f9f9 0%, #dce1e4 55%, #ffffff 100%);
+}
+
+/* 51:158：cards3 前段由透明淡出成白。45.319% 之後漸層維持最後一個停點＝純白，
+   等於同一條漸層順便把「影片不該蓋到的 cards3 下半段」一起蓋掉，不用第二個元素。 */
+.story-band .cards3 {
+  position: relative;
+}
+
+.story-band .cards3::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(249, 249, 249, 0) 0%,
+    rgba(249, 249, 249, 0) 5.498%,
+    #ffffff 45.319%
+  );
+}
+
+/* 全站第一組涵蓋 <video> 的 reduced-motion 規則：現有的 base.css:17、
+   reveal.css:41、tabs.css:106、home.css 的 orbit 都只管 transition/transform。
+   用 display:none 而非 pause()，這樣連檔案都不會下載。 */
+@media (prefers-reduced-motion: reduce) {
+  .story-band__video,
+  .resilience__streak video {
+    display: none;
+  }
+}
+
+/* 2026-09-10 影片策略調整
+   原本這裡有一條 @media (max-width:767px) 把 hero3 與 hero4 一起關掉，理由寫的是
+   「省流量」與「避開 iOS 低耗電模式擋 autoplay」。兩個理由都不成立——手機本來就
+   無條件下載 hero1（2.5MB）與兩支裝置影片（合計 5.5MB），卻為了省 lazy 載入的
+   hero3（1.9MB）把它關掉，邏輯是反的；低耗電模式對 hero1 一樣會擋。
+   真正成立的只有「多支影片同時解碼耗電」，那件事已改由 lazy-video.js 的
+   離場暫停處理（任何時候只有看得見的那幾支在跑），對六支影片一視同仁。
+   所以六支影片在手機上一律照播，沒有例外。 */
+
+/* 手機（≤767）的墊底改用純漸層，省掉 intro-light-bg.webp 那次請求。
+   影片照播，這層只是它載入前／載入失敗時的底。
+
+   為什麼不留那張圖：實測 375 時 .story-band 高達 2747px，cover 會把 1920×1208
+   的素材橫向裁掉 91.4%、只留原圖中央 165px 寬的一條再放大 2.274 倍；而原圖的
+   波紋集中在下半部（y≈580 以下），所以手機中段量到的是 stddev 只有 1.5–2.1 的
+   死平灰藍，對比拉高 14 倍也只看得到 banding，沒有任何紋理。既然那張圖在手機上
+   的產出就是一個純色，用漸層畫等值、還少一次請求。
+   漸層停點取自改動前的實際渲染色（intro 下半 #e3e7eb → spaces-app 底 #dde2e5），
+   所以影片載入前後的色調是接近的，不會有明顯跳色。
+   注意 hero3 影片吃的是同一組 cover 參數，手機上同樣會被裁成窄條、看起來偏平；
+   要真的有質感的正解是換一張直式構圖的素材，調 background-position 救不了。 */
+@media (max-width: 767px) {
+  .story-band__bg {
+    background: linear-gradient(
+      180deg,
+      #e6eaee 0%,
+      #dee4e8 50%,
+      #dde2e5 100%
+    );
+  }
+}

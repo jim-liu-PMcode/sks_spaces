@@ -1,0 +1,67 @@
+/* ==========================================================================
+   tokens.css — 全站設計 Token（顏色／字型／間距）
+   共用層，供全站 5 頁共用，不要在此檔寫任何頁面專屬樣式
+   ========================================================================== */
+
+/* ---- 字型載入：Google Fonts CDN ----
+   原本是自架 woff2（assets/fonts/），Noto Sans TC 還依首頁逐字文案做過子集化
+   （subsetting）以壓到 65KB／字重。但那個做法的代價是：字型檔裡物理上只有首頁用到的
+   372 個字符，任何新頁面出現子集外的新字（例：「擺」「槍」「鈕」）就會 fallback 到
+   系統字型，同一行字粗細不一致。每加一頁都要重跑子集化流程，維護成本太高。
+
+   改用 Google Fonts CDN：Google 會把 Noto Sans TC 自動切成上百個 unicode-range
+   分片，瀏覽器只下載該頁真正用到的分片，缺字問題永久消失，日後新增頁面不需任何處理。
+   載入的 <link> 寫在各頁 <head>（含 preconnect），不放在這裡，因為 CSS @import
+   會阻塞並延後字型請求。
+
+   注意：assets/fonts/ 底下的 5 個 woff2 保留未刪，僅不再被引用；若日後要改回自架，
+   把這段換回 @font-face 區塊即可（子集化仍需重跑）。
+*/
+
+:root {
+  /* 顏色 */
+  --color-primary: #2563eb;
+  --color-primary-hover: #7fe4ff;
+  --color-primary-dark: #153885;
+  --text-dark: #111827;
+  --text-regular: #6b7280;
+  --text-caption: #898e99;
+  --line: #e5e7eb;
+  --bg-footer: #111827;
+  --white: #ffffff;
+
+  /* Figma 內頁（產品介紹等）用到、首頁未變數化的色。
+     刻意不覆寫上面的 --text-dark / --text-regular，避免動到首頁既有視覺。 */
+  --surface-soft: #f8f9fa; /* 卡片／頁籤未選中底色 */
+  --text-heading: #212327; /* Figma Text/Dark */
+  --text-body: #3b3f45; /* Figma Text/800 */
+  --text-muted: #676f79; /* Figma Text/Regular */
+  --text-note: #374151; /* chip 說明、表格註記 */
+
+  /* 首頁專用：深色不透明 Header／CTA／表單背景（品牌深藍系） */
+  --home-header-bg: #002a84;
+  --brand-gradient-dark: linear-gradient(180deg, #002a84 0%, #0142d3 100%);
+  --brand-gradient-card: linear-gradient(131deg, #548aff 1.4%, #2563eb 77.2%);
+
+  /* 字型 */
+  --font-en: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-tc: 'Noto Sans TC', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* 版面 */
+  /* 1200 → 1280：加寬讓 intro 標題 50px 兩行放得下（2026-09-02） */
+  --container-max: 1280px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  --header-height: 96px; /* Figma 59-1910 對稿：全站一致 96px */
+}

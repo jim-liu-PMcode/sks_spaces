@@ -1,0 +1,52 @@
+/* ==========================================================================
+   reveal.css — 區塊層級「捲動到才飛入」效果
+   由 js/common/reveal-on-scroll.js 於進入視窗時加上 .is-visible（一次性）
+   只在 html.js（head inline script 標記 JS 可用）下才隱藏：
+   無 JS 的使用者與爬蟲直接看到完整內容，不會被 opacity:0 蓋住。
+
+   變體：data-reveal="left" / "right" 改為水平滑入（≤1024px 降回向上淡入）。
+   錯開：元素 inline style 設 --reveal-delay（如 0.15s）即可延後進場。
+   ========================================================================== */
+
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+html.js [data-reveal="left"] {
+  transform: translateX(-32px);
+}
+
+html.js [data-reveal="right"] {
+  transform: translateX(32px);
+}
+
+/* transform: none 同時復位 Y 與 X 變體；(0,3,1) 特異性高於上面所有 (0,2,1) */
+html.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 1024px) {
+  /* 單欄排版時左右滑入會顯得突兀，降回向上淡入 */
+  html.js [data-reveal="left"],
+  html.js [data-reveal="right"] {
+    transform: translateY(24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 同樣加 html.js 前綴：不加的話特異性會輸給上面的 html.js [data-reveal]，
+     減少動態的使用者反而會被 opacity:0 蓋住。
+     [data-reveal] 屬性選擇器不分值，left/right 變體同樣命中；
+     特異性同為 (0,2,1)，此區塊在檔案最後、宣告順序贏。 */
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    transition-delay: 0s;
+  }
+}

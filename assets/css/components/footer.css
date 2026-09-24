@@ -1,0 +1,97 @@
+/* ==========================================================================
+   footer.css — 共用 Footer 元件（footer 為靜態 HTML，2026-09-02 起）
+   ========================================================================== */
+
+.site-footer {
+  background: var(--bg-footer);
+  color: var(--white);
+  padding-block: var(--space-7) var(--space-5);
+}
+
+.site-footer__top {
+  display: grid;
+  grid-template-columns: minmax(240px, 420px) 1fr;
+  gap: var(--space-7);
+  padding-bottom: var(--space-6);
+}
+
+.site-footer__brand-desc {
+  font-size: clamp(0.9375rem, 0.75rem + 0.35vw, 1.125rem); /* 15px → 18px（Figma 51-589，1714px 到頂） */
+  color: var(--text-regular);
+  line-height: 1.5;
+  margin-top: var(--space-4);
+  max-width: 400px;
+}
+
+.site-footer__logo img,
+.site-footer__logo svg {
+  height: 28px;
+  width: auto;
+}
+
+.site-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.site-footer__col-title {
+  font-weight: 800; /* Figma 51-594 ExtraBold（Google Fonts link 已加 800 字重） */
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--line);
+  margin-bottom: 20px; /* Figma 51-594 標題→連結列表間距 */
+}
+
+.site-footer__col-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Figma 51-597 列表 gap */
+}
+
+.site-footer__col-list a {
+  font-size: clamp(0.9375rem, 0.75rem + 0.35vw, 1.125rem); /* 15px → 18px（Figma 51-597） */
+  line-height: 1.5;
+  color: var(--text-regular);
+  transition: color 0.2s ease;
+}
+
+.site-footer__col-list a:hover {
+  color: var(--color-primary-hover);
+}
+
+.site-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 13px;
+  color: var(--text-regular); /* Figma 51-628 */
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .site-footer__top {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .site-footer__columns {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .site-footer__columns {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+}

@@ -1,0 +1,371 @@
+/* ==========================================================================
+   header.css — 共用 Header 元件（DOM 寫死在各頁 HTML，本檔只寫樣式）
+
+   底色決策（2026-09-09 更新）：
+   - products / solutions / faq：不透明白底（body[data-header-theme="light"]，見檔尾）
+   - 首頁：捲動反應式——在最頂端時透明（透出 hero 背景影片），一旦捲離頂端
+     即切換為與其他頁相同的白底。由 js/home/header-scroll.js 切換 body 的
+     data-header-theme 屬性（transparent ↔ light）達成，透明態規則掛 html.js
+     前綴，關掉 JS 時自動退回不透明深藍，不會出現白字疊白底。
+   ========================================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  width: 100%;
+  height: var(--header-height);
+  background: #111827; /* 預設底色，各頁應覆寫 */
+  transition: background-color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+/* 首頁：深色不透明面板（也是關掉 JS 時的退化狀態） */
+body[data-page='home'] .site-header {
+  background: var(--home-header-bg);
+  /* Figma 59-1910：淺灰半透明底線（--line @50%；2021 瀏覽器無 color-mix，直接寫 rgba） */
+  border-bottom: 0.5px solid rgba(229, 231, 235, 0.5);
+  /* 改 fixed 讓 header 疊在 hero 影片上，頂端透明才看得到影片。
+     只作用於首頁，其他三頁維持上面的 sticky。
+     注意：.hero__content 的 padding-top 本來就寫成 calc(var(--header-height) + 6.5vw)，
+     那個 var(--header-height) 就是為了避開疊上來的 header——header 進到 overlay 後
+     該值自動歸位，不需要另外補償。 */
+  position: fixed;
+}
+
+/* 首頁深色版 nav 對稿（Figma 59-1910）：非 active 60% 白、
+   active 純白 500 無底線；light 主題（檔尾）與 CTA 不受影響 */
+body[data-page='home'] .site-header__nav-link {
+  opacity: 0.6;
+}
+
+body[data-page='home'] .site-header__nav-link:hover {
+  opacity: 1;
+}
+
+body[data-page='home'] .site-header__nav-link[aria-current='page'] {
+  opacity: 1;
+  font-weight: 500;
+}
+
+.site-header__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  height: 100%;
+  padding-inline: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.site-header__logo {
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+.site-header__logo img,
+.site-header__logo svg {
+  height: 100%;
+  width: auto;
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.site-header__nav-link {
+  font-family: var(--font-tc);
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--white);
+  opacity: 0.85;
+  position: relative;
+  padding-block: 4px;
+  white-space: nowrap; /* 防止 641–900 過渡區間 nav 連結斷行 */
+  transition: opacity 0.2s ease;
+}
+
+.site-header__nav-link:hover {
+  opacity: 1;
+}
+
+.site-header__nav-link[aria-current='page'] {
+  opacity: 1;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* 對稿 Figma HEADER 59:1910 的按鈕子節點 I59:1910;9:7031（深色 Header 版本）。
+   Figma 的 backdrop-filter 是 blur(--sds-size-blur-100 / 2)，該 token 為 8px，故實值 4px。
+   light 主題（產品／解決方案／FAQ 三頁）沒有對應設計稿，半透明白底＋白字在白 Header
+   上沒有對比度，因此下方 light 區塊會把 background／border／blur／color 全數還原。 */
+.site-header__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 12px 40px;
+  border-radius: 999px;
+  border: 1px solid var(--text-regular);
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 18px;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Safari 到 17 只認 -webkit- 前綴，Firefox 要 103+；不支援時就是單純的半透明白底，
+   仍在深色 Header 上看得見，不需要另寫 fallback 材質。 */
+@supports (backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px)) {
+  .site-header__cta {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.site-header__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* Figma 未提供 focus 稿；補一組鍵盤可見焦點（原本完全沒有）。 */
+.site-header__cta:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+/* ---- 手機版漢堡按鈕 ---- */
+.site-header__burger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.site-header__burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  position: relative;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.site-header__burger span::before,
+.site-header__burger span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  transition: transform 0.2s ease, top 0.2s ease;
+}
+
+.site-header__burger span::before {
+  top: -7px;
+}
+
+.site-header__burger span::after {
+  top: 7px;
+}
+
+.site-header.is-nav-open .site-header__burger span {
+  background: transparent;
+}
+
+.site-header.is-nav-open .site-header__burger span::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.site-header.is-nav-open .site-header__burger span::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 1024px) {
+  .site-header__nav {
+    gap: var(--space-4);
+  }
+}
+
+/* 斷點 640 → 900：641–900 的 20px nav（4 連結＋CTA）塞不下會斷行，
+   統一 900 以下收進漢堡面板 */
+@media (max-width: 900px) {
+  .site-header__burger {
+    display: inline-flex;
+  }
+
+  .site-header__nav {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    background: var(--home-header-bg);
+    padding: var(--space-3) var(--space-4) var(--space-5);
+    transform: translateY(-8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+  }
+
+  .site-header.is-nav-open .site-header__nav {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .site-header__nav-link {
+    width: 100%;
+    padding-block: var(--space-3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Figma 只有 1920 桌機稿，這裡按桌機值（48px／40px／18px）等比縮。 */
+  .site-header__cta {
+    height: 44px;
+    padding-inline: var(--space-4);
+    font-size: 16px;
+  }
+}
+
+/* ==========================================================================
+   Light 主題（白底 + 黑 logo）
+   由 <body data-header-theme="light"> 啟用。products/solutions/faq 寫死在 HTML；
+   首頁則由 js/home/header-scroll.js 在捲離頂端時動態切上來（見檔尾透明態區塊）。
+   logo 白↔黑不靠 JS 換 src，而是兩張 img 疊加、用下面的 opacity 規則交叉淡入。
+   放在檔案最後，靠 body 屬性提高權重覆寫上面的深色預設（含 900px 內的手機面板）。
+   ========================================================================== */
+body[data-header-theme='light'] .site-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+
+body[data-header-theme='light'] .site-header__nav-link {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+body[data-header-theme='light'] .site-header__nav-link:hover,
+body[data-header-theme='light'] .site-header__nav-link[aria-current='page'] {
+  color: var(--color-primary);
+}
+
+/* 深色版的半透明白底＋灰邊＋blur 在白底 Header 上沒有對比度，這裡整組還原成實色藍底。 */
+body[data-header-theme='light'] .site-header__cta {
+  background: var(--color-primary);
+  color: var(--white);
+  border-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+body[data-header-theme='light'] .site-header__cta:hover {
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
+}
+
+body[data-header-theme='light'] .site-header__cta:focus-visible {
+  outline-color: var(--color-primary);
+}
+
+body[data-header-theme='light'] .site-header__burger span,
+body[data-header-theme='light'] .site-header__burger span::before,
+body[data-header-theme='light'] .site-header__burger span::after {
+  background: var(--text-dark);
+}
+
+body[data-header-theme='light'] .site-header.is-nav-open .site-header__burger span {
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  body[data-header-theme='light'] .site-header__nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+  }
+
+  body[data-header-theme='light'] .site-header__nav-link {
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+/* ==========================================================================
+   透明態（僅首頁，捲動在最頂端時）
+   由 js/home/header-scroll.js 設 <body data-header-theme="transparent">。
+   HTML 上就先寫好這個值，所以首屏第一次繪製就是透明，不會閃一下深藍。
+
+   權重：html.js 前綴 = (0,3,0)，壓過 body[data-page='home'] .site-header 的 (0,2,0)。
+   掛 html.js 還有第二個目的——關掉 JS 時這條不生效，退回不透明深藍 header，
+   白色 logo 與白字仍然可讀；若改用單純的 .is-scrolled 反向邏輯就會變成白字疊白底。
+   ========================================================================== */
+html.js body[data-header-theme='transparent'] .site-header {
+  background: transparent;
+  /* 用 color 而非 border: none，避免 96px → 95.5px 的高度跳動，也才 transition 得動 */
+  border-bottom-color: transparent;
+}
+
+/* ==========================================================================
+   Logo 白↔黑交叉淡入（僅首頁；--swap 這個 class 只出現在 index.html）
+   不用 JS 換 src：第一次切換要重新請求 + decode，會閃一格空白，也做不出淡入。
+   兩張 SVG 各約 6KB，多一個請求可忽略。
+   其他三頁只有單張 logo、沒有 --on-light 元素，下面兩條規則對它們是 no-op。
+   ========================================================================== */
+.site-header__logo--swap {
+  position: relative;
+}
+
+.site-header__logo-img {
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.site-header__logo-img--on-light {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: auto;
+  opacity: 0;
+}
+
+body[data-header-theme='light'] .site-header__logo-img--on-light {
+  opacity: 1;
+}
+
+body[data-header-theme='light'] .site-header__logo-img--on-dark {
+  opacity: 0;
+}
+
+/* 初次定位主題之前不要有過場。
+   <body> 開標籤後的 inline script 會在 first paint 前把 data-header-theme 定對，
+   並在完成後補上 data-header-ready；在那之前若帶著 0.2s transition，
+   捲動位置還原的情境會看到錯誤狀態慢慢淡出（正是這條要避免的）。
+   限定 body[data-page='home']：只有首頁有那段開機腳本會設 data-header-ready，
+   若不限定，其他三頁會因為永遠拿不到該屬性而變成「永久無過場」——目前看不出來
+   （它們的 header 不變色），但日後替那三頁加 header 動效就會踩到。
+   權重 (0,3,1) 壓過 .site-header 的 (0,1,0)。
+   首頁關掉 JS 時本條恆成立＝完全無過場，符合預期（沒有狀態切換）。 */
+body[data-page='home']:not([data-header-ready]) .site-header,
+body[data-page='home']:not([data-header-ready]) .site-header__logo-img {
+  transition: none;
+}
